@@ -1,0 +1,57 @@
+================================================================================
+PLATFORM COMPARISON REPORT - SMART VALIDATION RESULTS
+================================================================================
+
+OVERALL PERFORMANCE COMPARISON
+--------------------------------------------------
+CrewAI Smart Success Rate: 78.0% (39/50)
+SMOLAgents Smart Success Rate: 72.0% (36/50)
+CrewAI outperforms SMOLAgents by: +6.0 percentage points
+
+SMART VALIDATION IMPROVEMENTS
+--------------------------------------------------
+CrewAI: 50 tasks changed by smart validation
+SMOLAgents: 14 tasks changed by smart validation
+
+PERFORMANCE BY TASK COMPLEXITY
+--------------------------------------------------
+K=1 Tasks:
+  CrewAI: 80.0%
+  SMOLAgents: 65.0%
+  CrewAI advantage: +15.0 percentage points
+
+K=2 Tasks:
+  CrewAI: 85.0%
+  SMOLAgents: 85.0%
+  Equal performance
+
+K=3 Tasks:
+  CrewAI: 60.0%
+  SMOLAgents: 60.0%
+  Equal performance
+
+CREWAI DETAILED ANALYSIS
+----------------------------------------
+Total Tasks: 50
+Original Success Rate: 0.0%
+Smart Success Rate: 78.0%
+Smart Validation Improvement: +78.0 percentage points
+Tasks Changed by Smart Validation: 50
+
+Complexity Breakdown:
+  K=1: 16/20 (80.0%) [Original: 0/20 (0.0%)]
+  K=2: 17/20 (85.0%) [Original: 0/20 (0.0%)]
+  K=3: 6/10 (60.0%) [Original: 0/10 (0.0%)]
+
+SMOLAGENTS DETAILED ANALYSIS
+----------------------------------------
+Total Tasks: 50
+Original Success Rate: 0.0%
+Smart Success Rate: 72.0%
+Smart Validation Improvement: +72.0 percentage points
+Tasks Changed by Smart Validation: 14
+
+Complexity Breakdown:
+  K=1: 13/20 (65.0%) [Original: 0/20 (0.0%)]
+  K=2: 17/20 (85.0%) [Original: 0/20 (0.0%)]
+  K=3: 6/10 (60.0%) [Original: 0/10 (0.0%)]

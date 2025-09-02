@@ -1,0 +1,91 @@
+{
+  "runs": [
+    {
+      "run_id": "run_20250902_145535",
+      "start_time": "2025-09-02T14:55:35.000000",
+      "end_time": "2025-09-02T14:55:35.000000",
+      "status": "completed",
+      "platforms": [
+        "smolagents"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 0.44,
+      "results_file": "runs/benchmark_results_run_20250902_145535.csv",
+      "metadata_file": "runs/run_metadata_run_20250902_145535.json"
+    },
+    {
+      "run_id": "run_000001_20250902_121855",
+      "start_time": "2025-09-02T12:18:55.895806",
+      "end_time": "2025-09-02T12:35:37.832281",
+      "status": "completed",
+      "platforms": [
+        "mock",
+        "crewai"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 100,
+      "success_rate": 0.99,
+      "results_file": "runs/benchmark_results_run_000001_20250902_121855.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250902_121855.json"
+    },
+    {
+      "run_id": "run_000001_20250902_113001",
+      "start_time": "2025-09-02T11:30:01.986559",
+      "end_time": "2025-09-02T11:47:10.141467",
+      "status": "completed",
+      "platforms": [
+        "mock",
+        "crewai"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 100,
+      "success_rate": 0.99,
+      "results_file": "runs/benchmark_results_run_000001_20250902_121855.csv",
+      "metadata_file": "run_metadata_run_000001_20250902_113001.json"
+    },
+    {
+      "run_id": "run_000001_20250902_103551",
+      "start_time": "2025-09-02T10:35:51.049758",
+      "end_time": "2025-09-02T10:51:10.369107",
+      "status": "completed",
+      "platforms": [
+        "mock",
+        "crewai"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 100,
+      "success_rate": 0.98,
+      "results_file": "runs/benchmark_results_run_000001_20250902_103551.csv",
+      "metadata_file": "run_metadata_run_000001_20250902_103551.json"
+    }
+  ]
+}

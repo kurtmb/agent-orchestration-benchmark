@@ -1,0 +1,257 @@
+# Agent Orchestration Stress Test – v1
+
+A pragmatic, reproducible framework to benchmark agent orchestration platforms by sweeping **tool-catalog size** and **tools required per task**, with deterministic LLM settings and mocked tools.
+
+---
+
+## 0) Scope & principles
+
+* **Phase 1 focus:** Pure, noise-free runs (no ambiguity, no injected errors, no network). Start small and fixed; expand later.
+* **Determinism:** LLM temp→0.0, top\_p→0, fixed seed (if supported), fixed prompts, fixed tool outputs.
+* **Comparisons:** Same task suite, same tool catalog snapshot, same budgets across platforms.
+* **Repro:** All tasks + expected outputs are versioned fixtures.
+
+---
+
+## 1) Tool catalog (v1)
+
+Two families:
+
+### A) Variable tools (read-only)
+
+* Purpose: emulate key-value lookup / micro-APIs with **fixed outputs**.
+* Args: strict JSON schema; hard-fail on mismatch.
+
+**Schema (JSON Schema):**
+
+```json
+{
+  "type": "object",
+  "properties": {"key": {"type": "string"}},
+  "required": ["key"],
+  "additionalProperties": false
+}
+```
+
+**Interface (conceptual):**
+
+* `GET_VAR_ALPHA({"key": "A1"}) -> "delta"`
+* `GET_VAR_BETA({"key": "B9"}) -> 42`
+* `GET_VAR_GAMMA({"key": "G2"}) -> {"x": 3, "y": 4}`
+
+> We’ll instantiate N such tools with distinct names and deterministic lookup tables. In v1 there are **no distractors** and names are unambiguous.
+
+### B) Function tools (pure, stateless)
+
+* Purpose: deterministic transforms to force multi-step composition.
+* Args: strict JSON schema; return types are fixed.
+
+Examples (v1 set):
+
+1. `ADD(a: number, b: number) -> number`
+2. `MUL(a: number, b: number) -> number`
+3. `CONCAT(a: string, b: string) -> string`
+4. `REGEX_EXTRACT(text: string, pattern: string) -> string|null` (first match)
+5. `TITLE_CASE(text: string) -> string`
+6. `MERGE(objA: object, objB: object) -> object` (shallow)
+
+> v1 omits stateful tools. v2 can add a tiny KV store to test planning/state.
+
+---
+
+## 2) Determinism controls
+
+* **LLM params:** `temperature=0.0`, `top_p=0`, `frequency/presence_penalty=0`, fixed seed if available.
+* **Prompts:** Fixed system prompt describing available tools and constraints.
+* **Mocking:** All tools return pre-baked values for given args; no randomness.
+* **Validation:** JSON-schema validate *inputs*; reject on mismatch to measure arg-validity.
+* **Replay:** Log transcripts and tool I/O for reruns.
+
+---
+
+## 3) Test suite (v1, fixed)
+
+Design: exact-output, deterministic checks. Each task states required tools implicitly by the transformation.
+
+### K=1 (selection)
+
+1. **T1:** "Return the value of ALPHA at key A1." → `GET_VAR_ALPHA({key:"A1"})` → expected: `"delta"`.
+2. **T2:** "What is BETA at B9 multiplied by 2?" → `GET_VAR_BETA` + arithmetic (but in v1, phrase directly calls `MUL(lookup, 2)` or answer explicitly instructs to use ADD twice? For K=1 we keep just lookup; see K=2 for math.)
+
+### K=2 (composition)
+
+3. **T3:** "Get ALPHA A1 and BETA B9; return A+B as a string." → `GET_VAR_ALPHA` + `GET_VAR_BETA` + `CONCAT` after converting number to string (explicit in task text).
+4. **T4:** "Fetch GAMMA G2, compute sqrt(x^2 + y^2)." → `GET_VAR_GAMMA` + `MUL` + `ADD` (no sqrt tool; specify integer result using 3-4-5 triangle → 5).
+
+### K=3 (pipeline)
+
+5. **T5:** "Get ALPHA A2 (a lowercase name), title-case it, then concat with '-OK'." → `GET_VAR_ALPHA` + `TITLE_CASE` + `CONCAT`.
+6. **T6:** "Fetch text T1, regex-extract first 3 digits, then concat with BETA B1 as string." → `GET_VAR_ALPHA` (or `TEXT_T1` var tool) + `REGEX_EXTRACT` + `CONCAT`.
+
+### Branching-lite (still deterministic)
+
+7. **T7:** "If BETA B2 > 10, return 'HIGH' else 'LOW'." → v1 supplies B2 so branch is predetermined; forces a comparison step. (Either implement `GT(a,b)` or phrase the task to require returning a fixed label knowing B2.)
+
+> All tasks include a **fixture** with exact expected output.
+
+---
+
+## 4) Fixtures (v1 examples)
+
+We’ll ship a single JSON file of values used by all tools to ensure cross-platform parity, e.g.:
+
+```json
+{
+  "ALPHA": {"A1": "delta", "A2": "john doe", "T1": "Order #123: ref 9876"},
+  "BETA": {"B1": 7, "B2": 12, "B9": 42},
+  "GAMMA": {"G2": {"x": 3, "y": 4}}
+}
+```
+
+…and a task list with expected outputs:
+
+```json
+[
+  {"id":"T1","prompt":"Return the value of ALPHA at key A1.","expect":"delta"},
+  {"id":"T3","prompt":"Get ALPHA A1 and BETA B9; return A+B as a string.","expect":"delta42"},
+  {"id":"T4","prompt":"Fetch GAMMA G2, compute sqrt(x^2 + y^2) using only ADD and MUL.","expect":5}
+]
+```
+
+---
+
+## 5) Metrics & CSV schema (log every run)
+
+**Per-run columns:**
+
+* `run_id` (uuid), `platform` (e.g., langgraph/crewai/autogen/smolagents/custom)
+* `seed`, `temperature`, `top_p`
+* `N_available`, `K_required`, `task_id`
+* `max_steps`, `timeout_s`, `retry_policy`
+* **Outcomes:** `success` (0/1), `final_output`, `expect`, `exact_match` (0/1), `numeric_tol_ok` (0/1)
+* **Process:** `steps_used`, `tools_called`, `correct_tool_calls`, `distractor_calls` (v2), `arg_validation_failures`
+* **Timing:** `start_ts`, `end_ts`, `wall_ms`
+* **Token/cost (if available):** `prompt_tokens`, `completion_tokens`, `tool_tokens`, `usd_cost`
+* **Errors:** `timeout`, `nontermination`, `schema_error`, `other_error`
+* `transcript_path` (pointer to JSONL of the episode)
+
+> Keep CSV narrow and stable; raw transcripts saved as JSONL per episode.
+
+---
+
+## 6) Run matrix (Phase 1)
+
+* `N_available ∈ {5, 10, 25, 50}`
+* `K_required ∈ {1, 2, 3}`
+* `ambiguity=0`, `error_rate=0`, `latency=0`, `parallelism=off`
+* `replicates=5` per cell (still useful for platforms with slight nondeterminism)
+
+Rough total episodes per platform: 4×3×5 = **60**.
+
+---
+
+## 7) Budget & runtime notes (v1)
+
+* Keep prompts short; cap `max_steps` (e.g., 20) to prevent runaway loops.
+* Measure tokens per episode on a small sample, then size the full suite per platform to stay **< \$200** total.
+* Prefer smaller base models where possible for orchestration (if platform allows) to reduce cost without changing logic.
+* Disable verbose tool returns unless required (short observations).
+
+---
+
+## 8) Roadmap (v2/v3)
+
+* **v2:** Introduce ambiguity (near-duplicate tool names/desc), longer observations, and parallelism; add stateful KV tool; add `GT`, `EQ`, `FILTER` utilities; introduce larger catalogs (100–200).
+* **v3:** Error injection (5xx, malformed JSON), latency distributions, catalog churn (tools added/removed mid-episode), budget ceilings, noisy prompts.
+* **Reporting:** Leaderboard, per-failure bundles, Pareto charts (failure reasons), success vs. N\_available curves.
+
+---
+
+## 9) Starter Python harness (structure)
+
+```
+agentbench/
+  fixtures/
+    values.json            # ALPHA/BETA/GAMMA store
+    tasks.v1.json          # prompts + expected outputs
+  tools/
+    __init__.py
+    variables.py           # GET_VAR_* factories
+    functions.py           # ADD, MUL, CONCAT, REGEX_EXTRACT, TITLE_CASE, MERGE
+    registry.py            # build_catalog(N_available)
+  core/
+    schemas.py             # jsonschema definitions + validators
+    runner.py              # orchestrator adapter interface
+    adapters/
+      langgraph.py
+      crewai.py
+      autogen.py
+      smolagents.py
+      custom.py
+  eval/
+    oracle.py              # exact match / numeric tol
+    logger.py              # CSV + transcript JSONL
+    run_matrix.py          # loops over (N_available, K_required, replicates)
+  README.md
+```
+
+### Adapter interface (pseudo)
+
+```python
+class OrchestratorAdapter:
+    def __init__(self, tools, system_prompt, llm_params): ...
+    def run_episode(self, task_prompt, caps) -> dict:
+        """Return dict with final_output, steps_used, tool_calls[], tokens, timings, errors"""
+```
+
+### Building the catalog (no ambiguity, v1)
+
+```python
+# tools/registry.py
+from .variables import make_variable_tools
+from .functions import ADD, MUL, CONCAT, REGEX_EXTRACT, TITLE_CASE, MERGE
+
+def build_catalog(values, N_available):
+    var_tools = make_variable_tools(values)  # returns many GET_VAR_*
+    func_tools = [ADD, MUL, CONCAT, REGEX_EXTRACT, TITLE_CASE, MERGE]
+    catalog = (var_tools + func_tools)[:N_available]
+    return catalog
+```
+
+### Task selection by K\_required
+
+```python
+# eval/run_matrix.py
+K_TO_TASKS = {
+  1: ["T1"],
+  2: ["T3", "T4"],
+  3: ["T5", "T6"],
+}
+```
+
+### Strict validation
+
+* Use `jsonschema` to validate tool **inputs** before execution; record schema errors.
+* Reject additionalProperties to catch arg noise.
+
+---
+
+## 10) Notes you asked me to keep (so we don’t forget)
+
+* Track **all dependent variables** listed in §5 from day 1 (even if 0 for v1).
+* Keep **fixed task suite** and **fixed fixtures** under version control.
+* Implement **CSV + transcript JSONL** from the first commit.
+* Plan for **leaderboard + failure bundles** in v2; design logs now so these are trivial later.
+* Add budgeting utilities to cap total episodes/model cost to stay under **\$200**.
+
+---
+
+## 11) Next steps (concrete)
+
+1. Lock fixtures (`values.json`, `tasks.v1.json`).
+2. Implement `variables.py` + `functions.py` with pure, deterministic behavior.
+3. Write a single `custom.py` adapter that takes a callable `invoke(tool_calls_allowed, prompt, tools)` so you can quickly wrap each platform.
+4. Implement `run_matrix.py` to generate the Phase‑1 grid and output CSV + JSONL.
+5. Smoke test on one platform with `N_available={5,10}` and `K_required={1,2}`.
+
+> When you’re ready, I can generate the initial `values.json`, `tasks.v1.json`, and Python stubs matching this outline.

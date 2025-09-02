@@ -1,0 +1,110 @@
+# Agent Test Cases v1 (50 tasks)
+
+Deterministic task suite for Phase‑1 orchestration tests. Uses the **Agent Tools Catalog v1 (50 deterministic tools)** and the fixtures defined below. Each task has a natural‑language `prompt` (input) and an exact `expect` (expected output). No ambiguity, no error injection.
+
+---
+
+## Fixtures (`fixtures/values.json`)
+
+```json
+{
+  "ALPHA": {"A1": "delta", "A2": "john doe", "A3": "  spaced  ", "A4": "abc123xyz", "A5": "prefix_me", "A6": "hello", "A7": "lorem ipsum", "A8": "Order #123: ref 9876", "A9": "repeat-repeat", "A10": "case test"},
+  "BETA": {"B1": 7, "B2": 12, "B3": -5, "B4": 0, "B5": 100, "B6": 3, "B7": 10, "B8": 2, "B9": 42, "B10": 9},
+  "GAMMA": {"G1": {"x": 3, "y": 4}, "G2": {"x": 6, "y": 8}, "G3": {"nested": {"value": "v"}}},
+  "DELTA": {"D1": "foo", "D2": "bar baz", "D3": "12345", "D4": "A-B-C", "D5": "line1\nline2"},
+  "EPSILON": {"E1": [1, 2, 3], "E2": [5, 5, 2, 1, 2], "E3": [10, 9, 8, 7], "E4": [3, 1, 4, 1, 5], "E5": [0, 0, 0]},
+  "ZETA": {"Z1": "aaa", "Z2": "bbb"},
+  "ETA": {"T1": 15, "T2": -2},
+  "THETA": {"TH1": "The Quick brown FOX", "TH2": "edge"},
+  "IOTA": {"I1": {"a": 1, "b": 2}, "I2": {"arr": [1, 2, 2, 3]}},
+  "KAPPA": {"K1": ["a", "b", "a", "c"], "K2": ["z", "y", "x"]},
+  "LAMBDA": {"L1": 123.456, "L2": -7.89},
+  "MU": {"M1": "http://example.com", "M2": "data"},
+  "NU": {"N1": [{"id": 1}, {"id": 2}], "N2": [{"k": "v1"}, {"k": "v2"}]},
+  "XI": {"X1": 2, "X2": 8},
+  "OMICRON": {"O1": "hello", "O2": "world"},
+  "PI": {"P1": 3.14159, "P2": 2.71828},
+  "RHO": {"R1": "abcabc", "R2": "xyz"},
+  "SIGMA": {"S1": {"x": 1, "y": 2}, "S2": {"y": 9}},
+  "TAU": {"T1": [9, 8, 7, 6, 5, 4], "T2": [1, 3, 5, 7]},
+  "UPSILON": {"U1": "end", "U2": "start"}
+}
+```
+
+---
+
+## Tasks (`tasks.v1.json`)
+
+Each item:
+
+* `id`: stable identifier
+* `difficulty`: "simple" | "complex" | "very\_complex"
+* `prompt`: natural language input
+* `expect`: exact expected output (type is implied by JSON literal)
+
+```json
+[
+  {"id":"S01","difficulty":"simple","prompt":"Return the value of ALPHA at key A1.","expect":"delta"},
+  {"id":"S02","difficulty":"simple","prompt":"Uppercase the ALPHA A2 value.","expect":"JOHN DOE"},
+  {"id":"S03","difficulty":"simple","prompt":"Trim the ALPHA A3 value (both ends).","expect":"spaced"},
+  {"id":"S04","difficulty":"simple","prompt":"Extract the first number sequence from ALPHA A4.","expect":"123"},
+  {"id":"S05","difficulty":"simple","prompt":"Ensure ALPHA A5 starts with 'pre-'.","expect":"pre-prefix_me"},
+  {"id":"S06","difficulty":"simple","prompt":"Ensure ALPHA A6 ends with '-end'.","expect":"hello-end"},
+  {"id":"S07","difficulty":"simple","prompt":"Concatenate OMICRON O1, a space, then OMICRON O2.","expect":"hello world"},
+  {"id":"S08","difficulty":"simple","prompt":"Add BETA B1 and BETA B8.","expect":9},
+  {"id":"S09","difficulty":"simple","prompt":"Multiply BETA B6 by BETA B7.","expect":30},
+  {"id":"S10","difficulty":"simple","prompt":"Divide BETA B5 by BETA B7.","expect":10},
+  {"id":"S11","difficulty":"simple","prompt":"Length of EPSILON E1.","expect":3},
+  {"id":"S12","difficulty":"simple","prompt":"Unique values of EPSILON E2 preserving first occurrences.","expect":[5,2,1]},
+  {"id":"S13","difficulty":"simple","prompt":"Sort EPSILON E3 ascending.","expect":[7,8,9,10]},
+  {"id":"S14","difficulty":"simple","prompt":"Make the integer range from 0 to 5 (exclusive).","expect":[0,1,2,3,4]},
+  {"id":"S15","difficulty":"simple","prompt":"Join KAPPA K2 with '-' as separator.","expect":"z-y-x"},
+  {"id":"S16","difficulty":"simple","prompt":"Split DELTA D4 by '-'.","expect":["A","B","C"]},
+  {"id":"S17","difficulty":"simple","prompt":"Parse DELTA D3 as an integer.","expect":12345},
+  {"id":"S18","difficulty":"simple","prompt":"Base64-encode MU M2.","expect":"ZGF0YQ=="},
+  {"id":"S19","difficulty":"simple","prompt":"SHA-256 hash of string 'data'.","expect":"3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7"},
+  {"id":"S20","difficulty":"simple","prompt":"Format LAMBDA L1 with 2 decimal places.","expect":"123.46"},
+
+  {"id":"C01","difficulty":"complex","prompt":"Compute hypotenuse from GAMMA G1 (x,y).","expect":5},
+  {"id":"C02","difficulty":"complex","prompt":"Title-case ALPHA A2, then add suffix '-OK' and prefix '>> '.","expect":">> John Doe-OK"},
+  {"id":"C03","difficulty":"complex","prompt":"From EPSILON E4, unique→sort ascending→join with ','.","expect":"1,3,4,5"},
+  {"id":"C04","difficulty":"complex","prompt":"Take BETA B9, format with 3 decimals, then prefix '$'.","expect":"$42.000"},
+  {"id":"C05","difficulty":"complex","prompt":"Merge SIGMA S1 and SIGMA S2 (S2 overrides), then get '/y'.","expect":9},
+  {"id":"C06","difficulty":"complex","prompt":"Create the range [1,6) and return the last element.","expect":5},
+  {"id":"C07","difficulty":"complex","prompt":"Replace spaces with '_' in DELTA D2, then prefix 'id:'.","expect":"id:bar_baz"},
+  {"id":"C08","difficulty":"complex","prompt":"Lowercase THETA TH1, then title-case it.","expect":"The Quick Brown Fox"},
+  {"id":"C09","difficulty":"complex","prompt":"Concatenate OMICRON O1 + ' ' + OMICRON O2 using two CONCAT steps.","expect":"hello world"},
+  {"id":"C10","difficulty":"complex","prompt":"Extract the first 3–4 digit number from ALPHA A8.","expect":"123"},
+  {"id":"C11","difficulty":"complex","prompt":"(BETA B1 + BETA B8) * BETA B6.","expect":27},
+  {"id":"C12","difficulty":"complex","prompt":"PI P1 divided by XI X1, then to 6 decimals.","expect":"1.570795"},
+  {"id":"C13","difficulty":"complex","prompt":"Set '/c'=3 on IOTA I1 (pure), then get '/c'.","expect":3},
+  {"id":"C14","difficulty":"complex","prompt":"Slice TAU T1 from index 1 to 4 and join with ','.","expect":"8,7,6"},
+  {"id":"C15","difficulty":"complex","prompt":"Shallow-merge SIGMA S1 with S2; check equality with {x:1,y:9}.","expect":true},
+  {"id":"C16","difficulty":"complex","prompt":"Parse DELTA D3 to int, stringify, then prefix 'ID-'.","expect":"ID-12345"},
+  {"id":"C17","difficulty":"complex","prompt":"Base64-encode DELTA D1, decode it back, then add suffix '-ok'.","expect":"foo-ok"},
+  {"id":"C18","difficulty":"complex","prompt":"Clamp LAMBDA L2 to [-5,5] and format with 2 decimals.","expect":"-5.00"},
+  {"id":"C19","difficulty":"complex","prompt":"Make range [0,10) and return its length.","expect":10},
+  {"id":"C20","difficulty":"complex","prompt":"Title-case ALPHA A10, then ensure it ends with '!'.","expect":"Case Test!"},
+
+  {"id":"V01","difficulty":"very_complex","prompt":"If BETA B2 > 10 return 'HIGH-' + title-case(ALPHA A2); else 'LOW-' + title-case(ALPHA A2).","expect":"HIGH-John Doe"},
+  {"id":"V02","difficulty":"very_complex","prompt":"From ALPHA A8, extract first number, parse to int, add BETA B10, format with 0 decimals, then wrap with prefix 'ORD-' and suffix '-X'.","expect":"ORD-132-X"},
+  {"id":"V03","difficulty":"very_complex","prompt":"Take SIGMA S1, set '/meta/label' to title-case(ALPHA A2), merge with SIGMA S2 (override), pick keys ['y','meta'], then stringify the result.","expect":"{\"y\": 9, \"meta\": {\"label\": \"John Doe\"}}"},
+  {"id":"V04","difficulty":"very_complex","prompt":"Sort EPSILON E4 descending, take index 1, multiply by BETA B6, then format with 0 decimals.","expect":"12"},
+  {"id":"V05","difficulty":"very_complex","prompt":"Create greeting 'Hello, ' + title-case(lower(THETA TH1)) + '!'.","expect":"Hello, The Quick Brown Fox!"},
+  {"id":"V06","difficulty":"very_complex","prompt":"Concatenate OMICRON O1, space, OMICRON O2 → hash SHA-256.","expect":"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"},
+  {"id":"V07","difficulty":"very_complex","prompt":"Add PI P1 and PI P2, then format with 4 decimals.","expect":"5.8599"},
+  {"id":"V08","difficulty":"very_complex","prompt":"From IOTA I2 get '/arr', unique it, make a range [0, len), then return item at index 1.","expect":1},
+  {"id":"V09","difficulty":"very_complex","prompt":"Ensure ALPHA A9 ends with '-ok' (avoid duplicate '-ok'), then replace '-' with ':' and prefix 'v:'.","expect":"v:repeat:repeat-ok"},
+  {"id":"V10","difficulty":"very_complex","prompt":"Build object by merging {base: true} with SIGMA S1, then set '/info/code' to the first 3 digits found in ALPHA A8, and stringify.","expect":"{\"base\": true, \"x\": 1, \"y\": 2, \"info\": {\"code\": \"123\"}}"}
+]
+```
+
+---
+
+### Notes
+
+* All operations are intended to be solved **exclusively with the v1 tool catalog** (no model‑side math/regex without tools).
+* Title‑case uses ASCII rules; REGEX tools return the **first** match; merges are shallow.
+* "Ensure suffix/prefix" means avoid duplicating when already present.
+* Equality checks (`EQ`) are strict JSON deep equality.
+* Stringified objects are produced via `TO_STRING` with stable key order assumed by your implementation.

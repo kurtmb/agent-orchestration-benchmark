@@ -1,0 +1,22 @@
+{
+  "ALPHA": {"A1": "delta", "A2": "john doe", "A3": "  spaced  ", "A4": "abc123xyz", "A5": "prefix_me", "A6": "hello", "A7": "lorem ipsum", "A8": "Order #123: ref 9876", "A9": "repeat-repeat", "A10": "case test"},
+  "BETA": {"B1": 7, "B2": 12, "B3": -5, "B4": 0, "B5": 100, "B6": 3, "B7": 10, "B8": 2, "B9": 42, "B10": 9},
+  "GAMMA": {"G1": {"x": 3, "y": 4}, "G2": {"x": 6, "y": 8}, "G3": {"nested": {"value": "v"}}},
+  "DELTA": {"D1": "foo", "D2": "bar baz", "D3": "12345", "D4": "A-B-C", "D5": "line1\nline2"},
+  "EPSILON": {"E1": [1, 2, 3], "E2": [5, 5, 2, 1, 2], "E3": [10, 9, 8, 7], "E4": [3, 1, 4, 1, 5], "E5": [0, 0, 0]},
+  "ZETA": {"Z1": "aaa", "Z2": "bbb"},
+  "ETA": {"T1": 15, "T2": -2},
+  "THETA": {"TH1": "The Quick brown FOX", "TH2": "edge"},
+  "IOTA": {"I1": {"a": 1, "b": 2}, "I2": {"arr": [1, 2, 2, 3]}},
+  "KAPPA": {"K1": ["a", "b", "a", "c"], "K2": ["z", "y", "x"]},
+  "LAMBDA": {"L1": 123.456, "L2": -7.89},
+  "MU": {"M1": "http://example.com", "M2": "data"},
+  "NU": {"N1": [{"id": 1}, {"id": 2}], "N2": [{"k": "v1"}, {"k": "v2"}]},
+  "XI": {"X1": 2, "X2": 8},
+  "OMICRON": {"O1": "hello", "O2": "world"},
+  "PI": {"P1": 3.14159, "P2": 2.71828},
+  "RHO": {"R1": "abcabc", "R2": "xyz"},
+  "SIGMA": {"S1": {"x": 1, "y": 2}, "S2": {"y": 9}},
+  "TAU": {"T1": [9, 8, 7, 6, 5, 4], "T2": [1, 3, 5, 7]},
+  "UPSILON": {"U1": "end", "U2": "start"}
+}

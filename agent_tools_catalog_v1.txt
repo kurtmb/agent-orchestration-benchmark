@@ -1,0 +1,331 @@
+# Agent Tools Catalog v1 (50 deterministic tools)
+
+This catalog defines **50 mock tools** for orchestration tests. All tools are **pure, deterministic, and side‑effect free**. Inputs are **strictly JSON‑Schema validated** and must not include extraneous fields (`additionalProperties: false`). Outputs are fixed and reproducible. No external I/O.
+
+> Families:
+>
+> * **Variable tools (20):** key→value lookups from fixtures (e.g., `fixtures/values.json`).
+> * **Function tools (30):** math, string, list, object, and regex utilities for multi‑step composition.
+
+For each tool: name, description, **args_schema**, **returns**, and an **example**.
+
+---
+
+## Shared notes
+
+* Validation: reject inputs that fail schema; return a standardized error object your adapter will capture.
+* Numbers are IEEE‑754 doubles; integer tools note when they coerce or reject floats.
+* Regex is ECMAScript/PCRE‑like; flags must be explicit.
+* Hashing, encoding, and sorts are locale‑agnostic and stable.
+
+---
+
+## A) Variable tools (20)
+
+*All use the same argument schema and draw values from `fixtures/values.json` under their namespace. Implement as read‑only maps.*
+
+### Arg schema (shared)
+
+```json
+{
+  "type": "object",
+  "properties": {"key": {"type": "string"}},
+  "required": ["key"],
+  "additionalProperties": false
+}
+```
+
+> Example fixture structure:
+
+```json
+{
+  "ALPHA": {"A1": "delta", "A2": "john doe"},
+  "BETA": {"B1": 7, "B2": 12, "B9": 42},
+  "GAMMA": {"G2": {"x": 3, "y": 4}},
+  "EPSILON": {"E1": [1,2,3]},
+  "KAPPA": {"K1": ["a","b"]}
+}
+```
+
+List of 20 variable tools:
+
+1. **GET_ALPHA** — Retrieve a value from the ALPHA namespace using a key. Use this when you need to access data stored in the ALPHA collection. Args: {"key": "string"} - the key to look up (e.g., "A1", "A2", etc.). Returns a **string**. Example: `{key:"A1"}` → `"delta"`.
+2. **GET_BETA** — Retrieve a value from the BETA namespace using a key. Use this when you need to access numeric data stored in the BETA collection. Args: {"key": "string"} - the key to look up (e.g., "B1", "B2", etc.). Returns a **number**. Example: `{key:"B9"}` → `42`.
+3. **GET_GAMMA** — Retrieve a value from the GAMMA namespace using a key. Use this when you need to access coordinate or geometric data stored in the GAMMA collection. Args: {"key": "string"} - the key to look up (e.g., "G1", "G2", etc.). Returns an **object** `{x:number,y:number}`.
+4. **GET_DELTA** — Retrieve a value from the DELTA namespace using a key. Use this when you need to access string data stored in the DELTA collection. Args: {"key": "string"} - the key to look up (e.g., "D1", "D2", etc.). Returns a **string**.
+5. **GET_EPSILON** — Retrieve a value from the EPSILON namespace using a key. Use this when you need to access array data stored in the EPSILON collection. Args: {"key": "string"} - the key to look up (e.g., "E1", "E2", etc.). Returns an **array<number>**.
+6. **GET_ZETA** — Retrieve a value from the ZETA namespace using a key. Use this when you need to access string data stored in the ZETA collection. Args: {"key": "string"} - the key to look up (e.g., "Z1", "Z2", etc.). Returns a **string**.
+7. **GET_ETA** — Retrieve a value from the ETA namespace using a key. Use this when you need to access numeric data stored in the ETA collection. Args: {"key": "string"} - the key to look up (e.g., "T1", "T2", etc.). Returns a **number**.
+8. **GET_THETA** — Retrieve a value from the THETA namespace using a key. Use this when you need to access text data stored in the THETA collection. Args: {"key": "string"} - the key to look up (e.g., "TH1", "TH2", etc.). Returns a **string**.
+9. **GET_IOTA** — Retrieve a value from the IOTA namespace using a key. Use this when you need to access object data stored in the IOTA collection. Args: {"key": "string"} - the key to look up (e.g., "I1", "I2", etc.). Returns an **object** (shape defined in fixtures).
+10. **GET_KAPPA** — Retrieve a value from the KAPPA namespace using a key. Use this when you need to access array data stored in the KAPPA collection. Args: {"key": "string"} - the key to look up (e.g., "K1", "K2", etc.). Returns an **array<string>**.
+11. **GET_LAMBDA** — Retrieve a value from the LAMBDA namespace using a key. Use this when you need to access numeric data stored in the LAMBDA collection. Args: {"key": "string"} - the key to look up (e.g., "L1", "L2", etc.). Returns a **number**.
+12. **GET_MU** — Retrieve a value from the MU namespace using a key. Use this when you need to access string data stored in the MU collection. Args: {"key": "string"} - the key to look up (e.g., "M1", "M2", etc.). Returns a **string**.
+13. **GET_NU** — Retrieve a value from the NU namespace using a key. Use this when you need to access array data stored in the NU collection. Args: {"key": "string"} - the key to look up (e.g., "N1", "N2", etc.). Returns an **array<object>** (uniform shape in fixtures).
+14. **GET_XI** — Retrieve a value from the XI namespace using a key. Use this when you need to access numeric data stored in the XI collection. Args: {"key": "string"} - the key to look up (e.g., "X1", "X2", etc.). Returns a **number**.
+15. **GET_OMICRON** — Retrieve a value from the OMICRON namespace using a key. Use this when you need to access string data stored in the OMICRON collection. Args: {"key": "string"} - the key to look up (e.g., "O1", "O2", etc.). Returns a **string**.
+16. **GET_PI** — Retrieve a value from the PI namespace using a key. Use this when you need to access mathematical constant data stored in the PI collection. Args: {"key": "string"} - the key to look up (e.g., "P1", "P2", etc.). Returns a **number**.
+17. **GET_RHO** — Retrieve a value from the RHO namespace using a key. Use this when you need to access string data stored in the RHO collection. Args: {"key": "string"} - the key to look up (e.g., "R1", "R2", etc.). Returns a **string**.
+18. **GET_SIGMA** — Retrieve a value from the SIGMA namespace using a key. Use this when you need to access object data stored in the SIGMA collection. Args: {"key": "string"} - the key to look up (e.g., "S1", "S2", etc.). Returns an **object**.
+19. **GET_TAU** — Retrieve a value from the TAU namespace using a key. Use this when you need to access array data stored in the TAU collection. Args: {"key": "string"} - the key to look up (e.g., "T1", "T2", etc.). Returns an **array<number>**.
+20. **GET_UPSILON** — Retrieve a value from the UPSILON namespace using a key. Use this when you need to access string data stored in the UPSILON collection. Args: {"key": "string"} - the key to look up (e.g., "U1", "U2", etc.). Returns a **string**.
+
+---
+
+## B) Function tools (30)
+
+*Stateless utilities. Each tool's args schema is listed inline.*
+
+### Math & numeric (12)
+
+1. **ADD** — Add two numbers together. Use this for basic arithmetic when you need to sum two numeric values. Args: {"a": number, "b": number} - the two numbers to add.
+
+```json
+{"type":"object","properties":{"a":{"type":"number"},"b":{"type":"number"}},"required":["a","b"],"additionalProperties":false}
+```
+
+Returns: `number`.
+
+2. **SUB** — Subtract two numbers. Use this for basic arithmetic when you need to find the difference between two numeric values. Args: {"a": number, "b": number} - the two numbers to subtract. Returns: `number`.
+3. **MUL** — Multiply two numbers together. Use this for basic arithmetic when you need to find the product of two numeric values. Args: {"a": number, "b": number} - the two numbers to multiply. Returns: `number`.
+4. **DIV** — Divide two numbers. Use this for basic arithmetic when you need to find the quotient of two numeric values. Args: {"a": number, "b": number} - the two numbers to divide (reject `b=0`). Returns: `number`.
+5. **MOD** — Calculate the modulo of two numbers. Use this when you need to find the remainder after division. Args: {"a": number, "b": number} - both must be integers (reject otherwise). Returns: `number`.
+6. **POW** — Raise a number to a power. Use this when you need to calculate exponential values. Args: {"a": number, "b": number} - the base number and the exponent. Returns: `number`.
+7. **ABS** — Calculate the absolute value of a number. Use this when you need to find the magnitude of a number regardless of its sign. Args: {"x": number} - the number to find the absolute value of. Returns: `number`.
+8. **MIN** — Find the minimum of two numbers. Use this when you need to determine which of two values is smaller. Args: {"a": number, "b": number} - the two numbers to compare. Returns: `number`.
+9. **MAX** — Find the maximum of two numbers. Use this when you need to determine which of two values is larger. Args: {"a": number, "b": number} - the two numbers to compare. Returns: `number`.
+10. **ROUND** — Round a number to a specified number of decimal places. Use this when you need to format numbers for display or calculations. Args: {"x": number, "digits": integer} - the number to round and the number of decimal places (default 0).
+
+```json
+{"type":"object","properties":{"x":{"type":"number"},"digits":{"type":"integer","minimum":0}},"required":["x"],"additionalProperties":false}
+```
+
+Returns: `number`.
+
+11. **FLOOR** — Calculate the floor of a number (largest integer less than or equal to the number). Use this when you need to round down to the nearest integer. Args: {"x": number} - the number to find the floor of. Returns: `number`.
+12. **CEIL** — Calculate the ceiling of a number (smallest integer greater than or equal to the number). Use this when you need to round up to the nearest integer. Args: {"x": number} - the number to find the ceiling of. Returns: `number`.
+
+### Comparison & logic (6)
+
+13. **GT** — Check if one value is greater than another. Use this when you need to compare two values and determine which is larger. Args: {"a": any, "b": any} - the two values to compare. Returns: `boolean`.
+14. **GTE** — Check if one value is greater than or equal to another. Use this when you need to compare two values and determine if one is at least as large as the other. Args: {"a": any, "b": any} - the two values to compare. Returns: `boolean`.
+15. **LT** — Check if one value is less than another. Use this when you need to compare two values and determine which is smaller. Args: {"a": any, "b": any} - the two values to compare. Returns: `boolean`.
+16. **LTE** — Check if one value is less than or equal to another. Use this when you need to compare two values and determine if one is at most as large as the other. Args: {"a": any, "b": any} - the two values to compare. Returns: `boolean`.
+17. **EQ** — Check if two values are deeply equal. Use this when you need to determine if two values are identical, including nested objects and arrays. Args: {"a": any, "b": any} - the two values to compare. Returns: `boolean`.
+18. **NOT** — Apply logical NOT to a boolean value. Use this when you need to invert a boolean condition. Args: {"x": boolean} - the boolean value to negate.
+
+```json
+{"type":"object","properties":{"x":{}},"required":["x"],"additionalProperties":false}
+```
+
+Returns: `boolean`.
+
+### Strings (7)
+
+19. **CONCAT** — Concatenate two strings together. Use this when you need to join two text pieces into a single string. Args: {"a": "string", "b": "string"} - the two strings to concatenate.
+
+```json
+{"type":"object","properties":{"a":{"type":"string"},"b":{"type":"string"}},"required":["a","b"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+20. **UPPER** — Convert text to uppercase letters. Use this when you need to transform text to all capital letters. Args: {"text": "string"} - the text to convert to uppercase. Returns: `string`.
+21. **LOWER** — Convert text to lowercase letters. Use this when you need to transform text to all small letters. Args: {"text": "string"} - the text to convert to lowercase. Returns: `string`.
+22. **TITLE_CASE** — Convert text to title case (first letter of each word capitalized). Use this for formatting names, titles, or headings. Args: {"text": "string"} - the text to convert to title case. Returns: `string`.
+23. **TRIM** — Remove leading and trailing whitespace from text. Use this to clean up text that has extra spaces at the beginning or end. Args: {"text": "string"} - the text to trim. Returns: `string`.
+24. **REPLACE** — Replace all occurrences of a substring in text. Use this when you need to substitute one text pattern with another. Args: {"text": "string", "find": "string", "replace": "string"} - the text to search in, the text to find, and the text to replace it with.
+
+```json
+{"type":"object","properties":{"text":{"type":"string"},"find":{"type":"string"},"replace":{"type":"string"}},"required":["text","find","replace"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+25. **REGEX_EXTRACT** — Extract specific patterns from text using regular expressions. Use this when you need to find and extract numbers, dates, or other patterns from text. Args: {"text": "string", "pattern": "string", "flags": "string"} - the text to search in, the regex pattern, and optional flags.
+
+```json
+{"type":"object","properties":{"text":{"type":"string"},"pattern":{"type":"string"},"flags":{"type":"string","enum":["","i","m","s","im","is","ms","ims"]}},"required":["text","pattern"],"additionalProperties":false}
+```
+
+Returns: `string|null`.
+
+### Lists (5)
+
+26. **LIST_LEN** — Get the length of an array. Use this when you need to know how many items are in a list. Args: {"arr": "array"} - the array to measure.
+
+```json
+{"type":"object","properties":{"arr":{"type":"array"}},"required":["arr"],"additionalProperties":false}
+```
+
+Returns: `integer`.
+
+27. **LIST_GET** — Get an item at a specific index in an array. Use this when you need to retrieve a specific element from a list. Args: {"arr": "array", "index": "integer"} - the array to search in and the index position (supports negative indices).
+
+```json
+{"type":"object","properties":{"arr":{"type":"array"},"index":{"type":"integer"}},"required":["arr","index"],"additionalProperties":false}
+```
+
+Returns: `any`.
+
+28. **LIST_SLICE** — Extract a portion of an array. Use this when you need to get a subset of elements from a list. Args: {"arr": "array", "start": "integer", "end": "integer"} - the array to slice, start index, and optional end index.
+
+```json
+{"type":"object","properties":{"arr":{"type":"array"},"start":{"type":"integer"},"end":{"type":"integer"}},"required":["arr","start"],"additionalProperties":false}
+```
+
+Returns: `array`.
+
+29. **LIST_SORT** — Sort an array in ascending or descending order. Use this when you need to organize list items in a specific sequence. Args: {"arr": "array", "order": "string"} - the array to sort and the sort direction ("asc" or "desc").
+
+```json
+{"type":"object","properties":{"arr":{"type":"array","items":{}},"order":{"type":"string","enum":["asc","desc"]}},"required":["arr"],"additionalProperties":false}
+```
+
+Returns: `array`.
+
+30. **LIST_UNIQUE** — Remove duplicate values from a list while preserving order. Use this when you have a list with repeated items and want only unique values. Args: {"arr": "array"} - the array to deduplicate.
+
+```json
+{"type":"object","properties":{"arr":{"type":"array"}},"required":["arr"],"additionalProperties":false}
+```
+
+Returns: `array`.
+
+### Objects (5)
+
+31. **MERGE** — Shallow merge two objects (B overwrites A). Use this when you need to combine two objects, with the second object's properties taking precedence. Args: {"a": "object", "b": "object"} - the two objects to merge.
+
+```json
+{"type":"object","properties":{"a":{"type":"object"},"b":{"type":"object"}},"required":["a","b"],"additionalProperties":false}
+```
+
+Returns: `object`.
+
+32. **PICK** — Pick a subset of keys from an object. Use this when you need to extract only specific properties from an object. Args: {"o": "object", "keys": "array<string>"} - the object to pick from and the array of keys to extract.
+
+```json
+{"type":"object","properties":{"o":{"type":"object"},"keys":{"type":"array","items":{"type":"string"}}},"required":["o","keys"],"additionalProperties":false}
+```
+
+Returns: `object`.
+
+33. **OMIT** — Omit specified keys from an object (returns new object). Use this when you need to create a new object without certain properties. Args: {"o": "object", "keys": "array<string>"} - the object to omit from and the array of keys to exclude. Returns: `object`.
+34. **GET_PATH** — Get a nested value by JSON-pointer-like path. Use this when you need to access deeply nested properties in an object. Args: {"o": "object", "path": "string"} - the object to search in and the path to the desired value.
+
+```json
+{"type":"object","properties":{"o":{},"path":{"type":"string"}},"required":["o","path"],"additionalProperties":false}
+```
+
+Returns: `any|null` (null if missing).
+
+35. **SET_PATH** — Pure set; returns a **new** object with value at path (does not mutate input). Use this when you need to create a new object with a modified value at a specific path. Args: {"o": "object", "path": "string", "value": "any"} - the object to modify, the path to set, and the new value.
+
+```json
+{"type":"object","properties":{"o":{"type":"object"},"path":{"type":"string"},"value":{}},"required":["o","path","value"],"additionalProperties":false}
+```
+
+Returns: `object`.
+
+### Encoding & misc (2)
+
+36. **TO_STRING** — Convert a value to a JSON string. Use this when you need to serialize a value for storage or transmission. Args: {"value": "any"} - the value to convert to a string.
+
+```json
+{"type":"object","properties":{"value":{}},"required":["value"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+37. **PARSE_INT** — Parse a base-10 integer from a string. Use this when you need to convert a string representation of a number to an actual integer. Args: {"text": "string"} - the text to parse (reject non-integer strings).
+
+```json
+{"type":"object","properties":{"text":{"type":"string"}},"required":["text"],"additionalProperties":false}
+```
+
+Returns: `integer`.
+
+### Hash & encode (3)
+
+38. **HASH_SHA256** — Generate SHA-256 hash digest of UTF-8 input string. Use this when you need to create a cryptographic hash of text data. Args: {"text": "string"} - the text to hash. Returns: `string` (64-char hex).
+39. **BASE64_ENCODE** — Encode UTF-8 text to base64. Use this when you need to encode binary data or text for safe transmission. Args: {"text": "string"} - the text to encode. Returns: `string`.
+40. **BASE64_DECODE** — Decode base64 to UTF-8 string (reject invalid base64). Use this when you need to decode base64-encoded data back to its original form. Args: {"text": "string"} - the base64 text to decode. Returns: `string`.
+
+### Formatting & regex helpers (3)
+
+41. **PREFIX** — Ensure a string starts with a specified prefix (no duplicates). Use this when you need to guarantee that text begins with certain characters. Args: {"text": "string", "prefix": "string"} - the text to modify and the prefix to ensure.
+
+```json
+{"type":"object","properties":{"text":{"type":"string"},"prefix":{"type":"string"}},"required":["text","prefix"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+42. **SUFFIX** — Ensure a string ends with a specified suffix (no duplicates). Use this when you need to guarantee that text ends with certain characters. Args: {"text": "string", "suffix": "string"} - the text to modify and the suffix to ensure. Returns: `string`.
+43. **REGEX_MATCH** — Check if text matches a regex pattern. Use this when you need to validate that text conforms to a specific pattern. Args: {"text": "string", "pattern": "string", "flags": "string"} - the text to test, the regex pattern, and optional flags.
+
+```json
+{"type":"object","properties":{"text":{"type":"string"},"pattern":{"type":"string"},"flags":{"type":"string","enum":["","i","m","s","im","is","ms","ims"]}},"required":["text","pattern"],"additionalProperties":false}
+```
+
+Returns: `boolean`.
+
+### Deterministic conversions (3)
+
+44. **NUM_TO_FIXED** — Format a number with a fixed number of decimal places. Use this when you need to display numbers with consistent decimal precision. Args: {"x": "number", "digits": "integer"} - the number to format and the number of decimal places (0-10).
+
+```json
+{"type":"object","properties":{"x":{"type":"number"},"digits":{"type":"integer","minimum":0,"maximum":10}},"required":["x","digits"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+45. **JOIN** — Join an array of strings with a separator. Use this when you have a list of strings and want to create a single delimited string. Args: {"arr": "array<string>", "sep": "string"} - the array of strings to join and the separator to use.
+
+```json
+{"type":"object","properties":{"arr":{"type":"array","items":{"type":"string"}},"sep":{"type":"string"}},"required":["arr","sep"],"additionalProperties":false}
+```
+
+Returns: `string`.
+
+46. **SPLIT** — Split a string by a separator. Use this when you have a delimited string and want to break it into an array of parts. Args: {"text": "string", "sep": "string"} - the text to split and the separator to use.
+
+```json
+{"type":"object","properties":{"text":{"type":"string"},"sep":{"type":"string"}},"required":["text","sep"],"additionalProperties":false}
+```
+
+Returns: `array<string>`.
+
+### Additional math helpers (4)
+
+47. **CLAMP** — Clamp a number to a specified range. Use this when you need to ensure a value stays within minimum and maximum bounds. Args: {"x": "number", "min": "number", "max": "number"} - the value to clamp and the range boundaries.
+
+```json
+{"type":"object","properties":{"x":{"type":"number"},"min":{"type":"number"},"max":{"type":"number"}},"required":["x","min","max"],"additionalProperties":false}
+```
+
+Returns: `number`.
+
+48. **SIGN** — Get the sign of a number (-1, 0, or 1). Use this when you need to determine if a number is positive, negative, or zero. Args: {"x": "number"} - the number to check the sign of. Returns: `number`.
+49. **HYPOT** — Calculate the hypotenuse of a right triangle. Use this when you have two sides of a right triangle and need to find the length of the hypotenuse. Args: {"a": "number", "b": "number"} - the two sides of the right triangle.
+
+```json
+{"type":"object","properties":{"a":{"type":"number"},"b":{"type":"number"}},"required":["a","b"],"additionalProperties":false}
+```
+
+Returns: `number`.
+
+50. **RANGE** — Create an integer range from start to end. Use this when you need to generate a sequence of consecutive integers. Args: {"start": "integer", "end": "integer", "step": "integer"} - the start value, end value, and step size (step > 0).
+
+```json
+{"type":"object","properties":{"start":{"type":"integer"},"end":{"type":"integer"},"step":{"type":"integer","minimum":1}},"required":["start","end"],"additionalProperties":false}
+```
+
+Returns: `array<integer>`.
+
+---
+
+## Versioning
+
+* This is **Catalog v1** (no ambiguity, no errors). Future versions may introduce near‑duplicate tool names, noisy outputs, latency, and error injection.
+* Keep this document colocated with fixtures and adapters; reference it from your system prompt so all orchestrators see the same canonical definitions.
