@@ -201,6 +201,14 @@ class TestMatrixRunner:
             'results': []
         }
         
+        # Start the benchmark run with the logger
+        config = {
+            'platforms': [platform_name],
+            'catalog_sizes': [catalog_size],
+            'task_complexities': task_complexities
+        }
+        run_id = self.logger.start_run(config, [platform_name], [catalog_size], task_complexities)
+        
         # Get tasks by complexity
         tasks_by_complexity = {}
         for complexity in task_complexities:
@@ -276,6 +284,10 @@ class TestMatrixRunner:
         
         finally:
             platform_pbar.close()
+        
+        # Finish the benchmark run
+        success = results['total_tasks'] > 0
+        self.logger.finish_run(success=success)
         
         return results
 
