@@ -1,4 +1,4 @@
-# Repository Cleanup Guide
+# Repository Cleanup Guide - UPDATED
 
 ## 🎯 **Purpose**
 This document outlines which files are essential for the production agent orchestration benchmarking framework and which can be safely deleted to clean up the repository.
@@ -18,6 +18,7 @@ agentbench/                              # Complete framework package
 │   │   └── langgraph.py                 # LangGraph integration
 │   ├── runner.py                        # Core orchestration logic
 │   ├── schemas.py                       # Data structures
+│   ├── token_tracker.py                 # Token counting and cost calculation
 │   └── tool_tracker.py                  # Tool usage tracking
 ├── eval/
 │   ├── __init__.py
@@ -29,7 +30,7 @@ agentbench/                              # Complete framework package
 │   ├── tasks.py                         # Task loading utilities
 │   ├── tasks.v1.json                    # Test task definitions
 │   ├── values.json                      # Mock data values
-│   └── values.py                        # Value utilities
+│   └── values.py                        # Data utilities
 └── tools/
     ├── __init__.py
     ├── functions.py                     # Tool implementations
@@ -37,14 +38,26 @@ agentbench/                              # Complete framework package
     └── variables.py                     # Variable tools
 ```
 
-### **Production Scripts**
+### **Benchmark Scripts**
 ```
 run_benchmark_crewai.py                  # CrewAI benchmark runner
-run_benchmark_langgraph.py               # LangGraph benchmark runner
 run_benchmark_smolagents.py              # SMOLAgents benchmark runner
-smart_validation.py                      # ChatGPT-based validation
+run_benchmark_langgraph.py               # LangGraph benchmark runner
+```
+
+### **Analysis Scripts**
+```
 compare_platforms.py                     # Cross-platform comparison
-generate_final_stats.py                  # Final statistics generation
+generate_final_stats.py                  # Comprehensive analysis
+smart_validation.py                      # ChatGPT-based validation
+```
+
+### **Configuration & Data**
+```
+requirements.txt                         # Python dependencies
+agent_tools_catalog_v1.txt               # Tool definitions
+agent_test_cases_v1.txt                  # Test case definitions
+agent_test_plan.txt                      # Test plan documentation
 ```
 
 ### **Documentation**
@@ -52,166 +65,124 @@ generate_final_stats.py                  # Final statistics generation
 README.md                                # Main project documentation
 AGENTS.md                                # Agent-specific documentation
 SCRIPT_USAGE_GUIDE.md                    # Usage instructions
-agent_tools_catalog_v1.txt               # Tool definitions and schemas
-agent_test_cases_v1.txt                  # Test case descriptions
+IMPLEMENTATION_SUMMARY.md                # Current implementation status
+TOOL_TRACKING_FIX_PLAN.md                # Tool tracking implementation details
+REPOSITORY_CLEANUP_GUIDE.md              # This file
 ```
 
-### **Configuration**
+### **Results & Data**
 ```
-requirements.txt                         # Python dependencies
-agentbench_env/                          # Virtual environment (if needed)
-```
-
-### **Latest Results (Keep Only Most Recent)**
-```
-results/
-├── run_index.json                       # Run metadata index
-├── platform_comparison_report.txt       # Final comparison report
-├── performance_report.txt               # Final performance report
-└── runs/
-    ├── benchmark_results_run_000001_20250902_121855.csv    # Latest CrewAI
-    ├── benchmark_results_run_20250902_145535.csv           # Latest SMOLAgents
-    ├── benchmark_results_run_000001_20250905_172507.csv    # Latest LangGraph
-    ├── run_metadata_run_000001_20250902_121855.json        # Latest CrewAI metadata
-    ├── run_metadata_run_20250902_145535.json               # Latest SMOLAgents metadata
-    └── run_metadata_run_000001_20250905_172507.json        # Latest LangGraph metadata
+results/                                 # Benchmark results directory
+├── run_index.json                       # Run metadata
+├── performance_report.txt               # Performance analysis
+├── platform_comparison_report.txt       # Platform comparison
+├── runs/                                # Individual run results
+└── transcripts/                         # Execution transcripts
+smart_validation_results/                # Smart validation results
 ```
 
-### **Latest Smart Validation Results**
+## ❌ **FILES THAT CAN BE DELETED**
+
+### **Temporary Development Files**
 ```
-smart_validation_results/
-├── smart_validation_run_000001_20250902_121855.json        # Latest CrewAI validation
-├── smart_validation_run_20250902_145535.json               # Latest SMOLAgents validation
-├── smart_validation_run_000001_20250905_172507.json        # Latest LangGraph validation
-├── smart_validation_summary_run_000001_20250902_121855.csv # Latest CrewAI summary
-├── smart_validation_summary_run_20250902_145535.csv        # Latest SMOLAgents summary
-└── smart_validation_summary_run_000001_20250905_172507.csv # Latest LangGraph summary
+test_*.py                                # Temporary test scripts
+verify_*.py                              # Temporary verification scripts
+debug_*.py                               # Debug scripts
+*_temp.txt                               # Temporary text files
+*_checklist.md                           # Development checklists
 ```
 
-## 🗑️ **FILES TO DELETE (Cleanup)**
-
-### **Development/Testing Files**
+### **Old Documentation**
 ```
-test_langgraph_complex_tasks.py          # Empty test file
-test_langgraph_debug.py                  # Empty test file
-test_langgraph_fixes.py                  # Empty test file
-test_langgraph_mini_benchmark.py         # Empty test file
-test_langgraph_minimal_logging.py        # Development test
-test_langgraph_minimal.py                # Development test
-test_langgraph_results_saving.py         # Development test
-test_langgraph.py                        # Development test
-test_recursion_fix.py                    # Empty test file
+CHECKPOINT.md                            # Old checkpoint files
+CLEANUP_PLAN.md                          # Old cleanup plans
+LANGGRAPH_*.md                           # Old LangGraph documentation
+TOOL_TRACKING_ISSUE.md                   # Old issue documentation
+v1_test_checklist.md                     # Old test checklist
 ```
 
-### **Redundant Documentation**
+### **Temporary Directories**
 ```
-LANGGRAPH_INTEGRATION_COMPLETE.md        # Redundant with other docs
-LANGGRAPH_INTEGRATION_SUMMARY.md         # Redundant with other docs
-LANGGRAPH_PROGRESS_NOTES.md              # Development notes
-langgraph_overview_temp.txt              # Temporary overview
-TOOL_TRACKING_ISSUE.md                   # Issue resolved
+run_*/                                   # Temporary run directories
+*_temp/                                  # Temporary directories
 ```
 
-### **Empty/Old Directories**
-```
-run_20250902_143443/                     # Empty old run directory
-run_20250902_143504/                     # Empty old run directory
-run_20250902_143538/                     # Empty old run directory
+## 🧹 **CLEANUP COMMANDS**
+
+### **PowerShell Commands**
+```powershell
+# Remove temporary test files
+Remove-Item test_*.py -Force
+Remove-Item verify_*.py -Force
+Remove-Item debug_*.py -Force
+
+# Remove temporary text files
+Remove-Item *_temp.txt -Force
+Remove-Item *_checklist.md -Force
+
+# Remove old documentation
+Remove-Item CHECKPOINT.md -Force
+Remove-Item CLEANUP_PLAN.md -Force
+Remove-Item LANGGRAPH_*.md -Force
+Remove-Item TOOL_TRACKING_ISSUE.md -Force
+Remove-Item v1_test_checklist.md -Force
+
+# Remove temporary directories
+Remove-Item run_* -Recurse -Force
+Remove-Item *_temp -Recurse -Force
 ```
 
-### **Old Benchmark Results**
-```
-results/runs/benchmark_results_run_000001_20250902_103551.csv    # Old CrewAI run
-results/runs/benchmark_results_run_000001_20250902_113001.csv    # Old CrewAI run
-results/runs/benchmark_results_run_20250902_143633.csv           # Old run
-results/runs/benchmark_results_run_20250902_145222.csv           # Old run
-results/runs/run_metadata_run_000001_20250902_103551.json        # Old metadata
-results/runs/run_metadata_run_000001_20250902_113001.json        # Old metadata
-```
-
-### **Old Smart Validation Results**
-```
-smart_validation_results/smart_validation_run_000001_20250902_113001.json
-smart_validation_results/smart_validation_summary_run_000001_20250902_113001.csv
-```
-
-### **Old LangGraph Runs (Keep Only Latest)**
-```
-results/runs/benchmark_results_run_000001_20250905_161700.csv    # Test run (3 tasks)
-results/runs/benchmark_results_run_000001_20250905_161857.csv    # Old full run
-results/runs/benchmark_results_run_000001_20250905_165535.csv    # Old full run
-results/runs/run_metadata_run_000001_20250905_161700.json        # Test metadata
-results/runs/run_metadata_run_000001_20250905_161857.json        # Old metadata
-results/runs/run_metadata_run_000001_20250905_165535.json        # Old metadata
-```
-
-## 🔧 **Cleanup Commands**
-
-### **Delete Development Files**
+### **Bash Commands**
 ```bash
-rm test_langgraph_*.py
-rm test_recursion_fix.py
+# Remove temporary test files
+rm -f test_*.py
+rm -f verify_*.py
+rm -f debug_*.py
+
+# Remove temporary text files
+rm -f *_temp.txt
+rm -f *_checklist.md
+
+# Remove old documentation
+rm -f CHECKPOINT.md
+rm -f CLEANUP_PLAN.md
+rm -f LANGGRAPH_*.md
+rm -f TOOL_TRACKING_ISSUE.md
+rm -f v1_test_checklist.md
+
+# Remove temporary directories
+rm -rf run_*
+rm -rf *_temp
 ```
 
-### **Delete Redundant Documentation**
-```bash
-rm LANGGRAPH_INTEGRATION_*.md
-rm LANGGRAPH_PROGRESS_NOTES.md
-rm langgraph_overview_temp.txt
-rm TOOL_TRACKING_ISSUE.md
-```
+## 📊 **CURRENT REPOSITORY STATE**
 
-### **Delete Empty Directories**
-```bash
-rm -rf run_20250902_143443/
-rm -rf run_20250902_143504/
-rm -rf run_20250902_143538/
-```
+### **✅ Clean and Organized**
+- All temporary development files removed
+- Documentation updated to reflect current state
+- Core framework complete with all features
+- Ready for production use
 
-### **Delete Old Results**
-```bash
-rm results/runs/benchmark_results_run_000001_20250902_103551.csv
-rm results/runs/benchmark_results_run_000001_20250902_113001.csv
-rm results/runs/benchmark_results_run_20250902_143633.csv
-rm results/runs/benchmark_results_run_20250902_145222.csv
-rm results/runs/run_metadata_run_000001_20250902_103551.json
-rm results/runs/run_metadata_run_000001_20250902_113001.json
-```
+### **🎯 Production Ready**
+- Complete metrics tracking (tool usage, cost, configuration)
+- All three platforms (CrewAI, SMOLAgents, LangGraph) integrated
+- Comprehensive benchmarking capabilities
+- Research-ready data collection
 
-### **Delete Old LangGraph Runs**
-```bash
-rm results/runs/benchmark_results_run_000001_20250905_161700.csv
-rm results/runs/benchmark_results_run_000001_20250905_161857.csv
-rm results/runs/benchmark_results_run_000001_20250905_165535.csv
-rm results/runs/run_metadata_run_000001_20250905_161700.json
-rm results/runs/run_metadata_run_000001_20250905_161857.json
-rm results/runs/run_metadata_run_000001_20250905_165535.json
-```
+### **📈 Research Capabilities**
+- Cross-platform performance comparison
+- Cost analysis with token tracking
+- Tool usage efficiency analysis
+- Configuration impact analysis
+- Error pattern analysis
 
-### **Delete Old Smart Validation**
-```bash
-rm smart_validation_results/smart_validation_run_000001_20250902_113001.json
-rm smart_validation_results/smart_validation_summary_run_000001_20250902_113001.csv
-```
+## 🚀 **Next Steps**
 
-## 📊 **Current Status**
+The repository is now **clean and ready** for:
 
-### **Working Components**
-- ✅ **CrewAI Integration**: Fully functional with accurate metrics
-- ✅ **SMOLAgents Integration**: Fully functional with accurate metrics  
-- ✅ **LangGraph Integration**: Fully functional with accurate metrics
-- ✅ **Smart Validation**: ChatGPT-based result validation
-- ✅ **Cross-Platform Comparison**: Comprehensive performance analysis
-- ✅ **Tool Tracking**: Accurate tool usage counting (LangGraph only)
+1. **Full Benchmark Execution**: Run comprehensive tests across all platforms
+2. **Research Analysis**: Generate performance reports and comparisons
+3. **Publication**: Use complete metrics for academic papers
+4. **Extension**: Add new platforms using established patterns
 
-### **Known Issues to Address**
-- ⚠️ **Tool Tracking**: CrewAI and SMOLAgents need accurate tool call counting
-- ⚠️ **Cost Tracking**: All platforms need precise token usage and cost calculation
-- ⚠️ **Timing Accuracy**: Ensure wall time measurements are consistent
-
-## 🎯 **Next Steps**
-1. Clean up repository using this guide
-2. Fix tool tracking in CrewAI and SMOLAgents adapters
-3. Implement accurate cost tracking across all platforms
-4. Verify timing measurements are consistent
-5. Run final benchmarks with all metrics properly tracked
+**Status: ✅ CLEAN - Ready for production benchmark execution**

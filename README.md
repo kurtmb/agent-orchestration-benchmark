@@ -1,26 +1,28 @@
 # Agent Orchestration Benchmarking Framework
 
-A comprehensive benchmarking framework for evaluating agent orchestration platforms like CrewAI, SMOLAgents, and LangGraph against standardized test suites.
+A comprehensive benchmarking framework for evaluating agent orchestration platforms like CrewAI, SMOLAgents, and LangGraph against standardized test suites with complete metrics tracking.
 
 ## 🎯 **Project Overview**
 
-This framework provides a systematic way to compare different agent orchestration platforms by running them through identical test scenarios with deterministic fixtures, comprehensive logging, and intelligent result validation.
+This framework provides a systematic way to compare different agent orchestration platforms by running them through identical test scenarios with deterministic fixtures, comprehensive logging, intelligent result validation, and complete research-ready metrics.
 
 ### **Key Achievements**
-- ✅ **CrewAI Integration**: Fully functional adapter with 78% success rate
-- ✅ **SMOLAgents Integration**: Fully functional adapter with 72% success rate
+- ✅ **CrewAI Integration**: Fully functional adapter with complete metrics tracking
+- ✅ **SMOLAgents Integration**: Fully functional adapter with complete metrics tracking
+- ✅ **LangGraph Integration**: Fully functional adapter with complete metrics tracking
 - ✅ **50-Tool Test Suite**: Comprehensive mock tool catalog covering math, strings, lists, objects, and logic
 - ✅ **Smart Validation**: ChatGPT-powered result validation for intelligent correctness checking
-- ✅ **Robust Logging**: Structured logging system with individual run tracking
-- ✅ **Performance Metrics**: Complete tracking of success rates, timing, costs, and tool usage
-- ✅ **Multi-Platform Support**: Fair comparison between different orchestrator frameworks
+- ✅ **Complete Metrics**: Tool usage, cost tracking, configuration tracking, and performance analysis
+- ✅ **Research-Ready Data**: Academic-quality metrics for publication and analysis
 
 ## 🏗️ **Architecture**
 
 ### **Core Components**
 - **`OrchestratorAdapter`**: Abstract interface for platform integration
-- **`CrewAIAdapter`**: Production-ready CrewAI implementation (78% success rate)
-- **`SMOLAgentsAdapter`**: Production-ready SMOLAgents implementation (72% success rate)
+- **`CrewAIAdapter`**: Production-ready CrewAI implementation with complete metrics
+- **`SMOLAgentsAdapter`**: Production-ready SMOLAgents implementation with complete metrics
+- **`LangGraphAdapter`**: Production-ready LangGraph implementation with complete metrics
+- **`TokenTracker`**: Comprehensive token counting and cost calculation utility
 - **`BenchmarkLogger`**: Structured logging with run isolation
 - **`TestMatrixRunner`**: Full benchmark execution engine
 
@@ -34,6 +36,28 @@ This framework provides a systematic way to compare different agent orchestratio
 - **50 Test Cases**: Categorized by complexity (K=1, K=2, K=3)
 - **Deterministic Fixtures**: Pre-baked data for reproducible results
 - **Complexity Levels**: Simple (1 tool), Complex (2 tools), Very Complex (3+ tools)
+
+## 📊 **Complete Metrics Tracking**
+
+### **Performance Metrics**
+- **Execution Time**: Wall time measurement in milliseconds
+- **Success Rate**: Task completion success/failure tracking
+- **Tool Efficiency**: Accurate tool call counting and usage patterns
+
+### **Cost Analysis**
+- **Token Usage**: Prompt, completion, and tool tokens tracked
+- **USD Costs**: Real-time cost calculation based on OpenAI pricing
+- **Cost per Task**: Detailed cost analysis for optimization
+
+### **Configuration Tracking**
+- **Temperature**: LLM temperature setting
+- **Model Name**: Which model was used (e.g., "gpt-4o-mini")
+- **Resource Limits**: Max steps and timeout settings
+
+### **Error Analysis**
+- **Timeout Rates**: Task timeout tracking
+- **Failure Modes**: Schema errors, non-termination, other errors
+- **Retry Patterns**: Retry attempt tracking and success rates
 
 ## 🚀 **Quick Start**
 
@@ -49,15 +73,16 @@ python -m venv agentbench_env
 source agentbench_env/bin/activate
 
 # Install dependencies
-pip install crewai openai tqdm
+pip install -r requirements.txt
 ```
 
-### **2. Set OpenAI API Key**
+### **2. Set API Key**
 ```bash
-$env:OPENAI_API_KEY="your-api-key-here"
+# Set your OpenAI API key
+export OPENAI_API_KEY="your-api-key-here"
 ```
 
-### **3. Run Full Benchmark**
+### **3. Run Benchmarks**
 ```bash
 # Run CrewAI benchmark
 python run_benchmark_crewai.py
@@ -65,171 +90,139 @@ python run_benchmark_crewai.py
 # Run SMOLAgents benchmark
 python run_benchmark_smolagents.py
 
-# Compare both platforms
-python compare_platforms.py
+# Run LangGraph benchmark
+python run_benchmark_langgraph.py
 ```
 
 ### **4. Analyze Results**
 ```bash
-# Smart validation with ChatGPT (automatic)
-python generate_final_stats.py
-
-# Or run validation independently
+# Run smart validation
 python smart_validation.py
+
+# Compare platforms
+python compare_platforms.py
+
+# Generate final statistics
+python generate_final_stats.py
 ```
 
-## 📊 **Current Performance**
+## 📈 **Research Capabilities**
 
-### **Multi-Platform Results (Latest Runs)**
-- **CrewAI**: 78% success rate (39/50 tasks completed successfully)
-- **SMOLAgents**: 72% success rate (36/50 tasks completed successfully)
-- **Performance Gap**: CrewAI leads by 6 percentage points
-- **Both platforms**: Use 20 max steps and 3 retry attempts for fair comparison
+### **Cross-Platform Comparison**
+- **Performance Analysis**: Execution times, success rates, tool efficiency
+- **Cost Analysis**: Token usage, USD costs, cost optimization
+- **Tool Usage Patterns**: Tool selection efficiency, composition patterns
+- **Configuration Impact**: Temperature, model choice, resource limits
 
-### **Test Coverage by Complexity**
-- **K=1 Tasks**: 20 simple single-tool operations
-  - CrewAI: 85% success rate
-  - SMOLAgents: 65% success rate
-- **K=2 Tasks**: 20 two-tool compositions  
-  - CrewAI: 85% success rate
-  - SMOLAgents: 85% success rate
-- **K=3 Tasks**: 10 complex multi-tool chains
-  - CrewAI: 60% success rate
-  - SMOLAgents: 60% success rate
+### **Academic Research**
+- **Complete Metrics**: All data needed for academic publication
+- **Reproducible Results**: Deterministic fixtures and consistent execution
+- **Statistical Analysis**: Comprehensive data for statistical comparison
+- **Error Analysis**: Detailed failure mode analysis
 
 ## 🔧 **Framework Features**
 
-### **Platform Agnostic Design**
-- Abstract `OrchestratorAdapter` interface
-- Easy integration of new platforms
-- Consistent result format across all adapters
+### **Platform Integration**
+- **CrewAI**: Full integration with tool tracking and cost analysis
+- **SMOLAgents**: Full integration with tool tracking and cost analysis
+- **LangGraph**: Full integration with tool tracking and cost analysis
 
-### **Intelligent Validation**
-- Exact match validation for simple cases
-- ChatGPT-powered semantic validation for complex outputs
-- Fallback validation for edge cases
-- **Key Insight**: Many "failed" tasks actually contain correct logic with minor formatting differences
+### **Tool Tracking**
+- **Accurate Counts**: Real-time tool call tracking (no hardcoded values)
+- **Tool Details**: Complete tool call records with arguments and results
+- **Usage Patterns**: Tool selection and composition analysis
 
-### **Comprehensive Logging**
-- Individual run isolation with timestamps
-- Detailed execution transcripts
-- Performance metrics and cost tracking
-- Error classification and retry tracking
+### **Cost Tracking**
+- **Token Counting**: Accurate token usage with tiktoken
+- **Cost Calculation**: Real-time USD cost calculation
+- **Model Support**: GPT-4o, GPT-4o-mini, GPT-4, GPT-3.5-turbo pricing
 
-### **Robust Error Handling**
-- 3-attempt retry logic with delays
-- Threading-based timeout protection
-- Fresh context for each retry attempt
-- Comprehensive error classification
+### **Smart Validation**
+- **ChatGPT Integration**: Intelligent result validation
+- **Semantic Analysis**: Understanding of correct vs incorrect outputs
+- **Fallback Validation**: Manual heuristics for edge cases
 
-## 📁 **Repository Structure**
+## 📁 **Project Structure**
 
 ```
-agent_testing_20250901/
-├── agentbench/                    # Core framework
-│   ├── core/                     # Abstract interfaces
-│   ├── adapters/                 # Platform implementations
-│   ├── fixtures/                 # Test data and tasks
-│   └── eval/                     # Benchmark execution
-├── results/                      # Benchmark results
-│   ├── runs/                     # Individual run data
-│   ├── run_index.json           # Master run index
-│   └── transcripts.jsonl         # Execution logs
-├── smart_validation_results/     # ChatGPT validation results
-├── README.md                     # This file
-├── AGENTS.md                     # Technical guide for AI agents
-├── CHECKPOINT.md                 # Current development status
-├── CLEANUP_PLAN.md               # Cleanup and launch preparation
-├── SCRIPT_USAGE_GUIDE.md         # Script usage documentation
-├── run_benchmark_crewai.py       # CrewAI benchmark runner
-├── run_benchmark_smolagents.py   # SMOLAgents benchmark runner
-├── smart_validation.py           # Result validation
-├── compare_platforms.py          # Cross-platform comparison
-└── generate_final_stats.py       # Statistics generation
+agentbench/
+├── core/                    # Core framework components
+│   ├── adapters/           # Platform-specific adapters
+│   ├── runner.py           # Orchestration logic
+│   ├── token_tracker.py    # Cost and token tracking
+│   └── tool_tracker.py     # Tool usage tracking
+├── eval/                   # Benchmark execution
+│   ├── logger.py           # Results logging
+│   ├── oracle.py           # Validation logic
+│   └── run_matrix.py       # Test execution engine
+├── fixtures/               # Test data and tasks
+│   ├── tasks.v1.json       # Test task definitions
+│   └── values.json         # Mock data values
+└── tools/                  # Tool implementations
+    ├── functions.py        # Function tools
+    ├── registry.py         # Tool catalog
+    └── variables.py        # Variable tools
 ```
 
-## 🧪 **Testing Strategy**
+## 📊 **Results and Analysis**
 
-### **Deterministic Testing**
-- Fixed LLM parameters (temperature=0.0, top_p=0)
-- Pre-baked fixtures and expected outputs
-- Reproducible results across runs
+### **Output Files**
+- **CSV Results**: `benchmark_results_*.csv` with complete metrics
+- **JSONL Transcripts**: Detailed execution logs
+- **Smart Validation**: ChatGPT-based correctness analysis
+- **Comparison Reports**: Cross-platform performance analysis
 
-### **Comprehensive Coverage**
-- All 50 tools tested across all complexity levels
-- Edge cases and error conditions included
-- Performance and reliability metrics tracked
+### **Metrics Available**
+- **Basic Execution**: Success, output, timing
+- **Tool Usage**: Steps used, correct tool calls, tool details
+- **Cost Analysis**: Token usage, USD costs
+- **Configuration**: Temperature, model, limits
+- **Error Handling**: Timeouts, failures, retries
 
-### **Validation Pipeline**
-1. **Exact Match**: Primary validation method
-2. **Smart Validation**: ChatGPT semantic checking
-3. **Fallback**: Manual validation heuristics
+## 🎯 **Use Cases**
 
-## 🔮 **Future Enhancements**
+### **Academic Research**
+- **Platform Comparison**: Systematic evaluation of orchestrator frameworks
+- **Performance Analysis**: Execution time and efficiency comparison
+- **Cost Analysis**: Token usage and cost optimization research
+- **Tool Development**: Tool efficiency and selection analysis
 
-### **Planned Integrations**
-- **LangGraph**: Multi-agent workflow testing (next priority)
-- **AutoGen**: Conversational agent evaluation
-- **Custom Platforms**: Extensible adapter system
-
-### **Enhanced Metrics**
-- **Cost Analysis**: Token usage and API cost tracking
-- **Performance Profiling**: Detailed failure analysis and debugging
-- **Cross-Platform Insights**: Platform strengths and weaknesses analysis
-
-### **Advanced Testing**
-- **Dynamic Tool Generation**: Runtime tool creation and testing
-- **Stress Testing**: Scalability and reliability testing
-- **Real-World Scenarios**: Integration with actual APIs and services
-
-## 📈 **Performance Analysis**
-
-### **Success Metrics**
-- Task completion rate
-- Answer correctness (exact + semantic)
-- Tool usage efficiency
-- Error recovery capability
-
-### **Efficiency Metrics**
-- Wall time per task
-- Steps/turns required
-- Token usage and costs
-- Retry attempts needed
-
-### **Reliability Metrics**
-- Timeout frequency
-- Error type distribution
-- Context window management
-- Tool validation success
+### **Industry Applications**
+- **Platform Selection**: Data-driven choice of orchestration framework
+- **Performance Optimization**: Cost and efficiency optimization
+- **Tool Development**: Tool design and selection guidance
+- **Benchmarking**: Standardized evaluation methodology
 
 ## 🤝 **Contributing**
 
-This framework is designed for extensibility. To add a new platform:
+### **Adding New Platforms**
+1. Implement `OrchestratorAdapter` interface
+2. Add tool conversion logic
+3. Implement cost and configuration tracking
+4. Add to test matrix configuration
 
-1. Implement the `OrchestratorAdapter` interface
-2. Convert tools to platform-specific format
-3. Implement error handling and retry logic
-4. Add to the test matrix configuration
+### **Adding New Tools**
+1. Implement tool function in `tools/functions.py`
+2. Add to tool registry in `tools/registry.py`
+3. Create test cases in `fixtures/tasks.v1.json`
+4. Update tool catalog documentation
 
 ## 📚 **Documentation**
 
-- **`README.md`**: Project overview and quick start
-- **`AGENTS.md`**: Technical implementation details for AI agents
-- **`CHECKPOINT.md`**: Current development status and progress
-- **`CLEANUP_PLAN.md`**: Cleanup status and GitHub launch preparation
-- **`SCRIPT_USAGE_GUIDE.md`**: Comprehensive script usage instructions
+- **`IMPLEMENTATION_SUMMARY.md`**: Current implementation status
+- **`TOOL_TRACKING_FIX_PLAN.md`**: Tool tracking implementation details
+- **`REPOSITORY_CLEANUP_GUIDE.md`**: Repository organization guide
+- **`SCRIPT_USAGE_GUIDE.md`**: Detailed usage instructions
+- **`AGENTS.md`**: Agent-specific documentation
 
-## 🎉 **Current Status**
+## 🎉 **Status: Production Ready**
 
-The framework is **production-ready** with:
-- ✅ Complete CrewAI integration (78% success rate)
-- ✅ Complete SMOLAgents integration (72% success rate)
-- ✅ Comprehensive test suite (50 tools, 3 complexity levels)
-- ✅ Robust error handling (retry logic, timeouts)
-- ✅ Intelligent validation (ChatGPT-based)
-- ✅ Professional logging system (CSV + JSONL)
-- ✅ Clean, maintainable codebase
-- ✅ Multi-platform performance comparison
-- ✅ GitHub launch ready
+The framework is now **complete and ready** for:
 
-**Ready for cross-platform benchmarking, performance analysis, and open-source collaboration!**
+- ✅ **Full Benchmark Execution**: Comprehensive testing across all platforms
+- ✅ **Research Analysis**: Academic-quality data for publication
+- ✅ **Performance Comparison**: Cross-platform evaluation
+- ✅ **Cost Optimization**: Token usage and cost analysis
+- ✅ **Tool Development**: Tool efficiency and selection analysis
+
+**Ready for production use with complete, accurate, and research-ready metrics!**
