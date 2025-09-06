@@ -14,7 +14,10 @@ from crewai.tools import BaseTool
 
 from ..runner import OrchestratorAdapter, ExecutionResult, ToolCall
 from ...tools.registry import get_tool_by_name
+from ..token_tracker import TokenTracker, get_model_name_from_llm
 
+# Module-level call tracking for CrewAI tools
+_crewai_call_counts = {}
 
 class CrewAIToolWrapper(BaseTool):
     """Wrapper to make benchmark tools compatible with CrewAI."""
@@ -29,6 +32,9 @@ class CrewAIToolWrapper(BaseTool):
             args_schema=args_schema
         )
         self._tool_func = tool_func
+        self._name = name
+        # Initialize call count for this tool
+        _crewai_call_counts[name] = 0
     
     def _create_args_schema(self, tool_name: str):
         """Create the appropriate args_schema based on tool type."""
@@ -164,6 +170,8 @@ class CrewAIToolWrapper(BaseTool):
     def _run(self, **kwargs):
         """Execute the wrapped tool function."""
         try:
+            # Increment call count using module-level tracking
+            _crewai_call_counts[self._name] += 1
             # Convert kwargs to the format expected by our tools
             args = kwargs
             result = self._tool_func(args)
@@ -186,6 +194,7 @@ class CrewAIAdapter(OrchestratorAdapter):
         self.llm = None
         self.agent = None
         self.execution_history = []
+        self.token_tracker = None
     
     def _get_rich_description(self, tool_name: str) -> str:
         """Get rich, contextual description for a tool based on the updated catalog."""
@@ -313,6 +322,10 @@ class CrewAIAdapter(OrchestratorAdapter):
             model="gpt-4o-mini",
             temperature=0.0
         )
+        
+        # Initialize token tracker
+        model_name = get_model_name_from_llm(self.llm)
+        self.token_tracker = TokenTracker(model_name)
     
     def _create_agent(self, tools: List[CrewAIToolWrapper]):
         """Create the CrewAI agent."""
@@ -333,6 +346,9 @@ class CrewAIAdapter(OrchestratorAdapter):
         """Run a single task episode using CrewAI with retry logic and timeout protection."""
         if not self.agent:
             raise ValueError("Agent not initialized. Call register_tools first.")
+        
+        # Reset tool call counts for this episode
+        self._reset_tool_call_counts()
         
         start_time = datetime.now()
         tool_calls = []
@@ -419,16 +435,40 @@ class CrewAIAdapter(OrchestratorAdapter):
                 end_time = datetime.now()
                 wall_time = (end_time - start_time).total_seconds() * 1000
                 
+                # Get actual tool call count
+                actual_tool_calls = self._get_total_tool_calls()
+                
+                # Estimate token usage (CrewAI doesn't provide detailed token counts)
+                prompt_tokens = self.token_tracker.count_tokens(task_prompt) if self.token_tracker else None
+                completion_tokens = self.token_tracker.count_tokens(str(result)) if self.token_tracker else None
+                tool_tokens = sum(self.token_tracker.track_tool_call(tc.tool_name, tc.arguments, str(tc.result)) 
+                                for tc in tool_calls) if self.token_tracker else None
+                usd_cost = self.token_tracker.calculate_cost(prompt_tokens or 0, completion_tokens or 0) if self.token_tracker else None
+                
+                # Get configuration
+                model_name = get_model_name_from_llm(self.llm) if self.llm else None
+                temperature = self.llm.temperature if self.llm else None
+                
                 execution_result = ExecutionResult(
                     success=True,
                     final_output=str(result),
-                    steps_used=attempt + 1,  # Track attempts as steps
+                    steps_used=actual_tool_calls,  # Use actual tool call count
                     tools_called=tool_calls,
-                    correct_tool_calls=1,
+                    correct_tool_calls=actual_tool_calls,  # Use actual tool count
                     start_time=start_time,
                     end_time=end_time,
                     wall_time_ms=wall_time,
-                    other_error=f"Completed on attempt {attempt + 1}" if attempt > 0 else None
+                    other_error=f"Completed on attempt {attempt + 1}" if attempt > 0 else None,
+                    # Token tracking
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    tool_tokens=tool_tokens,
+                    usd_cost=usd_cost,
+                    # Configuration tracking
+                    temperature=temperature,
+                    model_name=model_name,
+                    max_steps=max_steps,
+                    timeout_seconds=timeout_seconds
                 )
                 
                 # Log retry information
@@ -494,7 +534,20 @@ class CrewAIAdapter(OrchestratorAdapter):
     def register_tools(self, tools: List[Dict[str, Any]]):
         """Register tools with the CrewAI adapter."""
         crewai_tools = self._convert_tools_to_crewai(tools)
+        self.tool_wrappers = crewai_tools  # Store tool wrappers for tracking
         self._create_agent(crewai_tools)
+    
+    def _get_total_tool_calls(self) -> int:
+        """Get the total number of tool calls made across all tools."""
+        if not hasattr(self, 'tool_wrappers'):
+            return 0
+        return sum(_crewai_call_counts.get(tool.name, 0) for tool in self.tool_wrappers)
+    
+    def _reset_tool_call_counts(self):
+        """Reset the call count for all tool wrappers."""
+        if hasattr(self, 'tool_wrappers'):
+            for tool in self.tool_wrappers:
+                _crewai_call_counts[tool.name] = 0
     
     def set_system_prompt(self, prompt: str):
         """Set the system prompt for the agent."""

@@ -41,6 +41,11 @@ class ExecutionResult:
     completion_tokens: Optional[int] = None
     tool_tokens: Optional[int] = None
     usd_cost: Optional[float] = None
+    # Configuration tracking
+    temperature: Optional[float] = None
+    model_name: Optional[str] = None
+    max_steps: Optional[int] = None
+    timeout_seconds: Optional[int] = None
 
 
 class OrchestratorAdapter(abc.ABC):

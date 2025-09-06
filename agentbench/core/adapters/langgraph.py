@@ -18,6 +18,7 @@ from langgraph.prebuilt import create_react_agent
 from ..runner import OrchestratorAdapter, ExecutionResult, ToolCall
 from ..tool_tracker import PlatformSpecificTracker
 from ...tools.registry import get_tool_by_name
+from ..token_tracker import TokenTracker, get_model_name_from_llm
 
 
 class LangGraphToolWrapper:
@@ -27,6 +28,7 @@ class LangGraphToolWrapper:
         self.name = name
         self._tool_func = tool_func
         self.description = description
+        self.call_count = 0  # Track number of calls
         
         # Create the LangChain tool
         self.langchain_tool = self._create_langchain_tool()
@@ -41,7 +43,7 @@ class LangGraphToolWrapper:
             def wrapped_tool(key: str):
                 """Wrapper for benchmark variable tool."""
                 try:
-                    # Convert to dict format expected by our tools
+                    self.call_count += 1
                     result = self._tool_func({"key": key})
                     return result
                 except Exception as e:
@@ -52,6 +54,7 @@ class LangGraphToolWrapper:
             def wrapped_tool(a: float, b: float):
                 """Wrapper for benchmark math tool."""
                 try:
+                    self.call_count += 1
                     result = self._tool_func({"a": a, "b": b})
                     return result
                 except Exception as e:
@@ -62,6 +65,7 @@ class LangGraphToolWrapper:
             def wrapped_tool(x: float):
                 """Wrapper for benchmark single number tool."""
                 try:
+                    self.call_count += 1
                     result = self._tool_func({"x": x})
                     return result
                 except Exception as e:
@@ -72,6 +76,7 @@ class LangGraphToolWrapper:
             def wrapped_tool(text: str):
                 """Wrapper for benchmark string tool."""
                 try:
+                    self.call_count += 1
                     result = self._tool_func({"text": text})
                     return result
                 except Exception as e:
@@ -82,6 +87,7 @@ class LangGraphToolWrapper:
             def wrapped_tool(**kwargs):
                 """Wrapper for benchmark tool."""
                 try:
+                    self.call_count += 1
                     result = self._tool_func(kwargs)
                     return result
                 except Exception as e:
@@ -119,30 +125,42 @@ class LangGraphAdapter(OrchestratorAdapter):
         
         # Initialize tool tracker
         self.tool_tracker = PlatformSpecificTracker("langgraph")
+        self.token_tracker = None
         
         # Convert tools to LangGraph format
-        self.langgraph_tools = self._convert_tools_to_langgraph(tools)
+        self.langgraph_tools, self.tool_wrappers = self._convert_tools_to_langgraph(tools)
         
         # Create the agent
         self._create_agent()
     
-    def _convert_tools_to_langgraph(self, tools: Dict[str, Any]) -> List:
+    def _convert_tools_to_langgraph(self, tools: Dict[str, Any]) -> tuple:
         """Convert benchmark tools to LangGraph format."""
         langgraph_tools = []
+        tool_wrappers = []
         
         for tool_name, tool_func in tools.items():
             # Get tool description from registry
             try:
                 tool_info = get_tool_by_name(tools, tool_name)
-                description = f"Tool: {tool_name}. Use this tool when you need to perform the operation: {tool_name}."
+                description = tool_info.get('description', f'Tool: {tool_name}')
             except:
                 description = f"Tool: {tool_name}"
             
             # Create wrapper
             wrapper = LangGraphToolWrapper(tool_name, tool_func, description)
             langgraph_tools.append(wrapper.langchain_tool)
+            tool_wrappers.append(wrapper)
         
-        return langgraph_tools
+        return langgraph_tools, tool_wrappers
+    
+    def _get_total_tool_calls(self):
+        """Get the total number of tool calls made during execution."""
+        return sum(wrapper.call_count for wrapper in self.tool_wrappers)
+    
+    def _reset_tool_call_counts(self):
+        """Reset tool call counts for a new episode."""
+        for wrapper in self.tool_wrappers:
+            wrapper.call_count = 0
     
     def _create_agent(self):
         """Create the LangGraph agent."""
@@ -155,18 +173,22 @@ class LangGraphAdapter(OrchestratorAdapter):
                 api_key=os.getenv("OPENAI_API_KEY")
             )
             
+            # Initialize token tracker
+            model_name = get_model_name_from_llm(self.llm)
+            self.token_tracker = TokenTracker(model_name)
+            
             # Create the agent with enhanced system prompt
             enhanced_prompt = (
                 f"{self.system_prompt}\n\n"
                 "IMPORTANT: When you produce the FINAL answer to the user, "
-                "it MUST be a single valid JSON object with no extra text. "
-                "Use tools as needed to complete the task, but ensure your "
-                "final response is clean, valid JSON."
+                "return ONLY the result value directly. Do not wrap it in JSON, "
+                "quotes, or add extra formatting. Just return the answer as a "
+                "simple value. Use tools as needed to complete the task."
             )
             
             self.agent = create_react_agent(
                 self.llm,
-                self.langgraph_tools,
+                self.langgraph_tools,  # Pass tools as a list
                 prompt=enhanced_prompt,
                 name="benchmark_agent"
             )
@@ -194,6 +216,9 @@ class LangGraphAdapter(OrchestratorAdapter):
         """
         start_time = datetime.now()
         tool_calls = []
+        
+        # Reset tool call counts for this episode
+        self._reset_tool_call_counts()
         
         # Retry logic
         max_retries = 3
@@ -237,16 +262,40 @@ class LangGraphAdapter(OrchestratorAdapter):
                 end_time = datetime.now()
                 wall_time = (end_time - start_time).total_seconds() * 1000
                 
+                # Get actual tool call count
+                actual_tool_calls = self._get_total_tool_calls()
+                
+                # Estimate token usage (LangGraph doesn't provide detailed token counts)
+                prompt_tokens = self.token_tracker.count_tokens(task_prompt) if self.token_tracker else None
+                completion_tokens = self.token_tracker.count_tokens(str(result)) if self.token_tracker else None
+                tool_tokens = sum(self.token_tracker.track_tool_call(tc.tool_name, tc.arguments, str(tc.result)) 
+                                for tc in tool_calls) if self.token_tracker else None
+                usd_cost = self.token_tracker.calculate_cost(prompt_tokens or 0, completion_tokens or 0) if self.token_tracker else None
+                
+                # Get configuration
+                model_name = get_model_name_from_llm(self.llm) if self.llm else None
+                temperature = self.llm.temperature if self.llm else None
+                
                 execution_result = ExecutionResult(
                     success=True,
                     final_output=str(result),
-                    steps_used=attempt + 1,  # Track attempts as steps
+                    steps_used=actual_tool_calls,  # Use actual tool call count
                     tools_called=tool_calls,
-                    correct_tool_calls=len(tool_calls),  # Use actual tool count
+                    correct_tool_calls=actual_tool_calls,  # Use actual tool count
                     start_time=start_time,
                     end_time=end_time,
                     wall_time_ms=wall_time,
-                    other_error=f"Completed on attempt {attempt + 1}" if attempt > 0 else None
+                    other_error=f"Completed on attempt {attempt + 1}" if attempt > 0 else None,
+                    # Token tracking
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    tool_tokens=tool_tokens,
+                    usd_cost=usd_cost,
+                    # Configuration tracking
+                    temperature=temperature,
+                    model_name=model_name,
+                    max_steps=max_steps,
+                    timeout_seconds=timeout_seconds
                 )
                 
                 # Log retry information
@@ -349,7 +398,7 @@ class LangGraphAdapter(OrchestratorAdapter):
     
     def register_tools(self, tools: Dict[str, Any]):
         """Register tools with the LangGraph adapter."""
-        self.langgraph_tools = self._convert_tools_to_langgraph(tools)
+        self.langgraph_tools, self.tool_wrappers = self._convert_tools_to_langgraph(tools)
         self._create_agent()
     
     def set_system_prompt(self, prompt: str):

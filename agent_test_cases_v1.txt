@@ -94,7 +94,8 @@ Each item:
   {"id":"V06","difficulty":"very_complex","prompt":"Concatenate OMICRON O1, space, OMICRON O2 → hash SHA-256.","expect":"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"},
   {"id":"V07","difficulty":"very_complex","prompt":"Add PI P1 and PI P2, then format with 4 decimals.","expect":"5.8599"},
   {"id":"V08","difficulty":"very_complex","prompt":"From IOTA I2 get '/arr', unique it, make a range [0, len), then return item at index 1.","expect":1},
-  {"id":"V09","difficulty":"very_complex","prompt":"Ensure ALPHA A9 ends with '-ok' (avoid duplicate '-ok'), then replace '-' with ':' and prefix 'v:'.","expect":"v:repeat:repeat:ok"},
+  {"id":"V09","difficulty":"very_complex","prompt":"Ensure ALPHA A9 ends with '-ok' (avoid duplicate '-ok'), then replace '-' with ':' and prefix 'v:'.
+  ","expect":"v:repeat:repeat:ok"},
   {"id":"V10","difficulty":"very_complex","prompt":"Build object by merging {base: true} with SIGMA S1, then set '/info/code' to the first 3 digits found in ALPHA A8, and stringify.","expect":"{\"base\": true, \"x\": 1, \"y\": 2, \"info\": {\"code\": \"123\"}}"}
 ]
 ```

@@ -98,7 +98,7 @@ def analyze_platform_performance(results: List[Dict[str, Any]], platform: str) -
         'complexity_success_rates': complexity_success_rates
     }
 
-def generate_comparison_report(crewai_stats: Dict[str, Any], smolagents_stats: Dict[str, Any]) -> str:
+def generate_comparison_report(crewai_stats: Dict[str, Any], smolagents_stats: Dict[str, Any], langgraph_stats: Dict[str, Any]) -> str:
     """Generate a comprehensive comparison report."""
     
     report_lines = []
@@ -112,14 +112,26 @@ def generate_comparison_report(crewai_stats: Dict[str, Any], smolagents_stats: D
     report_lines.append("-" * 50)
     report_lines.append(f"CrewAI Smart Success Rate: {crewai_stats['smart_success_rate']:.1f}% ({crewai_stats['smart_success']}/{crewai_stats['total_tasks']})")
     report_lines.append(f"SMOLAgents Smart Success Rate: {smolagents_stats['smart_success_rate']:.1f}% ({smolagents_stats['smart_success']}/{smolagents_stats['total_tasks']})")
+    report_lines.append(f"LangGraph Smart Success Rate: {langgraph_stats['smart_success_rate']:.1f}% ({langgraph_stats['smart_success']}/{langgraph_stats['total_tasks']})")
     
-    success_rate_diff = smolagents_stats['smart_success_rate'] - crewai_stats['smart_success_rate']
-    if success_rate_diff > 0:
-        report_lines.append(f"SMOLAgents outperforms CrewAI by: +{success_rate_diff:.1f} percentage points")
-    elif success_rate_diff < 0:
-        report_lines.append(f"CrewAI outperforms SMOLAgents by: +{abs(success_rate_diff):.1f} percentage points")
-    else:
-        report_lines.append("Both platforms have identical performance")
+    # Find the best performing platform
+    platforms = [
+        ("CrewAI", crewai_stats['smart_success_rate']),
+        ("SMOLAgents", smolagents_stats['smart_success_rate']),
+        ("LangGraph", langgraph_stats['smart_success_rate'])
+    ]
+    platforms.sort(key=lambda x: x[1], reverse=True)
+    
+    report_lines.append(f"")
+    report_lines.append(f"Platform Ranking:")
+    for i, (platform, rate) in enumerate(platforms, 1):
+        report_lines.append(f"  {i}. {platform}: {rate:.1f}%")
+    
+    # Calculate differences
+    best_rate = platforms[0][1]
+    for platform, rate in platforms[1:]:
+        diff = best_rate - rate
+        report_lines.append(f"  {platform} trails {platforms[0][0]} by: {diff:.1f} percentage points")
     
     report_lines.append("")
     
@@ -128,6 +140,7 @@ def generate_comparison_report(crewai_stats: Dict[str, Any], smolagents_stats: D
     report_lines.append("-" * 50)
     report_lines.append(f"CrewAI: {crewai_stats['validation_changes']} tasks changed by smart validation")
     report_lines.append(f"SMOLAgents: {smolagents_stats['validation_changes']} tasks changed by smart validation")
+    report_lines.append(f"LangGraph: {langgraph_stats['validation_changes']} tasks changed by smart validation")
     report_lines.append("")
     
     # Complexity breakdown comparison
@@ -137,25 +150,31 @@ def generate_comparison_report(crewai_stats: Dict[str, Any], smolagents_stats: D
     for k in ['1', '2', '3']:
         crewai_k = crewai_stats['complexity_success_rates'].get(k, {})
         smolagents_k = smolagents_stats['complexity_success_rates'].get(k, {})
+        langgraph_k = langgraph_stats['complexity_success_rates'].get(k, {})
         
         crewai_smart = crewai_k.get('smart', 0)
         smolagents_smart = smolagents_k.get('smart', 0)
+        langgraph_smart = langgraph_k.get('smart', 0)
         
         report_lines.append(f"K={k} Tasks:")
         report_lines.append(f"  CrewAI: {crewai_smart:.1f}%")
         report_lines.append(f"  SMOLAgents: {smolagents_smart:.1f}%")
+        report_lines.append(f"  LangGraph: {langgraph_smart:.1f}%")
         
-        k_diff = smolagents_smart - crewai_smart
-        if k_diff > 0:
-            report_lines.append(f"  SMOLAgents advantage: +{k_diff:.1f} percentage points")
-        elif k_diff < 0:
-            report_lines.append(f"  CrewAI advantage: +{abs(k_diff):.1f} percentage points")
-        else:
-            report_lines.append(f"  Equal performance")
+        # Find best performer for this complexity
+        k_platforms = [
+            ("CrewAI", crewai_smart),
+            ("SMOLAgents", smolagents_smart),
+            ("LangGraph", langgraph_smart)
+        ]
+        k_platforms.sort(key=lambda x: x[1], reverse=True)
+        best_k = k_platforms[0]
+        
+        report_lines.append(f"  Best: {best_k[0]} ({best_k[1]:.1f}%)")
         report_lines.append("")
     
     # Detailed platform analysis
-    for platform_stats in [crewai_stats, smolagents_stats]:
+    for platform_stats in [crewai_stats, smolagents_stats, langgraph_stats]:
         platform = platform_stats['platform']
         report_lines.append(f"{platform.upper()} DETAILED ANALYSIS")
         report_lines.append("-" * 40)
@@ -208,16 +227,25 @@ def main():
         print(f"❌ Failed to load SMOLAgents results: {e}")
         sys.exit(1)
     
+    # Load LangGraph results
+    langgraph_run_id = "run_000001_20250905_172507"
+    try:
+        langgraph_results = load_smart_validation_results("langgraph", langgraph_run_id)
+    except Exception as e:
+        print(f"❌ Failed to load LangGraph results: {e}")
+        sys.exit(1)
+    
     print("\n📊 Analyzing platform performance...")
     
-    # Analyze both platforms
+    # Analyze all three platforms
     crewai_stats = analyze_platform_performance(crewai_results, "crewai")
     smolagents_stats = analyze_platform_performance(smolagents_results, "smolagents")
+    langgraph_stats = analyze_platform_performance(langgraph_results, "langgraph")
     
     print("\n📈 Generating comparison report...")
     
     # Generate comprehensive comparison
-    comparison_report = generate_comparison_report(crewai_stats, smolagents_stats)
+    comparison_report = generate_comparison_report(crewai_stats, smolagents_stats, langgraph_stats)
     
     # Print the report
     print("\n" + comparison_report)

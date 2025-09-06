@@ -1,6 +1,88 @@
 {
   "runs": [
     {
+      "run_id": "run_000001_20250905_172507",
+      "start_time": "2025-09-05T17:25:07.143100",
+      "end_time": "2025-09-05T17:43:49.586546",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250905_172507.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250905_172507.json"
+    },
+    {
+      "run_id": "run_000001_20250905_165535",
+      "start_time": "2025-09-05T16:55:35.711886",
+      "end_time": "2025-09-05T17:19:55.835378",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250905_165535.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250905_165535.json"
+    },
+    {
+      "run_id": "run_000001_20250905_161857",
+      "start_time": "2025-09-05T16:18:57.444549",
+      "end_time": "2025-09-05T16:34:06.628484",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250905_161857.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250905_161857.json"
+    },
+    {
+      "run_id": "run_000001_20250905_161700",
+      "start_time": "2025-09-05T16:17:00.122020",
+      "end_time": "2025-09-05T16:17:09.110773",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1"
+      ],
+      "total_tasks": 3,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250905_161700.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250905_161700.json"
+    },
+    {
       "run_id": "run_20250902_145535",
       "start_time": "2025-09-02T14:55:35.000000",
       "end_time": "2025-09-02T14:55:35.000000",
