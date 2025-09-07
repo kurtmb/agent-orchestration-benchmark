@@ -7,13 +7,14 @@ A comprehensive benchmarking framework for evaluating agent orchestration platfo
 This framework provides a systematic way to compare different agent orchestration platforms by running them through identical test scenarios with deterministic fixtures, comprehensive logging, intelligent result validation, and complete research-ready metrics.
 
 ### **Key Achievements**
-- ✅ **CrewAI Integration**: Fully functional adapter with complete metrics tracking
-- ✅ **SMOLAgents Integration**: Fully functional adapter with complete metrics tracking
-- ✅ **LangGraph Integration**: Fully functional adapter with complete metrics tracking
+- ✅ **CrewAI Integration**: Fully functional adapter with complete metrics tracking (78.0% success rate)
+- ✅ **SMOLAgents Integration**: Fully functional adapter with complete metrics tracking (72.0% success rate)
+- ✅ **LangGraph Integration**: Fully functional adapter with complete metrics tracking (67.3% success rate)
 - ✅ **50-Tool Test Suite**: Comprehensive mock tool catalog covering math, strings, lists, objects, and logic
 - ✅ **Smart Validation**: ChatGPT-powered result validation for intelligent correctness checking
 - ✅ **Complete Metrics**: Tool usage, cost tracking, configuration tracking, and performance analysis
 - ✅ **Research-Ready Data**: Academic-quality metrics for publication and analysis
+- ✅ **Optimization Archive**: Comprehensive documentation of LangGraph optimization attempts
 
 ## 🏗️ **Architecture**
 
@@ -94,6 +95,8 @@ python run_benchmark_smolagents.py
 python run_benchmark_langgraph.py
 ```
 
+**Note**: LangGraph optimization attempts have been archived in `archive/langgraph_optimization_attempts/` for reference.
+
 ### **4. Analyze Results**
 ```bash
 # Run smart validation
@@ -148,6 +151,9 @@ python generate_final_stats.py
 agentbench/
 ├── core/                    # Core framework components
 │   ├── adapters/           # Platform-specific adapters
+│   │   ├── crewai.py       # CrewAI integration
+│   │   ├── smolagents.py   # SMOLAgents integration
+│   │   └── langgraph.py    # LangGraph integration
 │   ├── runner.py           # Orchestration logic
 │   ├── token_tracker.py    # Cost and token tracking
 │   └── tool_tracker.py     # Tool usage tracking
@@ -158,10 +164,19 @@ agentbench/
 ├── fixtures/               # Test data and tasks
 │   ├── tasks.v1.json       # Test task definitions
 │   └── values.json         # Mock data values
-└── tools/                  # Tool implementations
-    ├── functions.py        # Function tools
-    ├── registry.py         # Tool catalog
-    └── variables.py        # Variable tools
+├── tools/                  # Tool implementations
+│   ├── functions.py        # Function tools
+│   ├── registry.py         # Tool catalog
+│   └── variables.py        # Variable tools
+├── archive/                # Archived optimization attempts
+│   └── langgraph_optimization_attempts/
+│       ├── adapters/       # Experimental LangGraph adapters
+│       ├── scripts/        # Test and benchmark scripts
+│       └── docs/           # Documentation and analysis
+└── results/                # Benchmark results and analysis
+    ├── runs/               # Raw benchmark results
+    ├── transcripts/        # Execution transcripts
+    └── run_index.json      # Run metadata
 ```
 
 ## 📊 **Results and Analysis**
@@ -210,10 +225,9 @@ agentbench/
 ## 📚 **Documentation**
 
 - **`IMPLEMENTATION_SUMMARY.md`**: Current implementation status
-- **`TOOL_TRACKING_FIX_PLAN.md`**: Tool tracking implementation details
-- **`REPOSITORY_CLEANUP_GUIDE.md`**: Repository organization guide
 - **`SCRIPT_USAGE_GUIDE.md`**: Detailed usage instructions
 - **`AGENTS.md`**: Agent-specific documentation
+- **`archive/langgraph_optimization_attempts/`**: LangGraph optimization attempts and analysis
 
 ## 🎉 **Status: Production Ready**
 
@@ -226,3 +240,13 @@ The framework is now **complete and ready** for:
 - ✅ **Tool Development**: Tool efficiency and selection analysis
 
 **Ready for production use with complete, accurate, and research-ready metrics!**
+
+## 🏆 **Current Performance Results**
+
+| Platform | Smart Validation Success Rate | Key Strengths |
+|----------|------------------------------|---------------|
+| **CrewAI** | 78.0% | Best overall performance, robust tool calling |
+| **SMOLAgents** | 72.0% | Good performance, efficient execution |
+| **LangGraph** | 67.3% | Solid baseline, extensive optimization attempts documented |
+
+**Note**: All platforms show significant improvement over exact string matching validation when using smart validation with ChatGPT.

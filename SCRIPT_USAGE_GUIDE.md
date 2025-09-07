@@ -37,6 +37,15 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 - Generates results in `results/` directory
 - Updates run index automatically
 
+#### `run_benchmark_langgraph.py`
+**Purpose**: Run full benchmark with LangGraph adapter
+**Usage**: `python run_benchmark_langgraph.py`
+**What it does**:
+- Runs full test matrix (50 tools, K=1/2/3 complexity)
+- Uses LangGraph adapter with 20 max steps
+- Generates results in `results/` directory
+- Updates run index automatically
+
 ### **2. Analysis & Validation Scripts**
 
 #### `smart_validation.py`
@@ -45,14 +54,14 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 **What it does**:
 - Automatically finds most recent run from run index
 - Validates results using ChatGPT (GPT-4o-mini)
-- Handles multiple platforms (CrewAI, SMOLAgents, Mock)
+- Handles multiple platforms (CrewAI, SMOLAgents, LangGraph, Mock)
 - Saves results to `smart_validation_results/`
 
 #### `compare_platforms.py`
-**Purpose**: Compare CrewAI vs SMOLAgents performance using smart validation
+**Purpose**: Compare all platforms (CrewAI, SMOLAgents, LangGraph) performance using smart validation
 **Usage**: `python compare_platforms.py`
 **What it does**:
-- Loads smart validation results for both platforms
+- Loads smart validation results for all platforms
 - Generates comprehensive comparison report
 - Shows performance by complexity level
 - Saves report to `results/platform_comparison_report.txt`
@@ -68,7 +77,7 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 
 ## 🚀 **Typical Workflow**
 
-### **Option 1: Run Both Platforms & Compare**
+### **Option 1: Run All Platforms & Compare**
 ```bash
 # 1. Run CrewAI benchmark
 python run_benchmark_crewai.py
@@ -76,7 +85,10 @@ python run_benchmark_crewai.py
 # 2. Run SMOLAgents benchmark  
 python run_benchmark_smolagents.py
 
-# 3. Compare results
+# 3. Run LangGraph benchmark
+python run_benchmark_langgraph.py
+
+# 4. Compare results
 python compare_platforms.py
 ```
 
@@ -86,6 +98,8 @@ python compare_platforms.py
 python run_benchmark_crewai.py
 # OR
 python run_benchmark_smolagents.py
+# OR
+python run_benchmark_langgraph.py
 
 # 2. Generate comprehensive analysis
 python generate_final_stats.py
@@ -114,15 +128,15 @@ python smart_validation.py
 ## 🔧 **Configuration**
 
 ### **Max Steps**
-- Both platforms use **20 max steps** (matching CrewAI test)
+- All platforms use **20 max steps** (matching CrewAI test)
 - Configurable in adapter files
 
 ### **Retry Logic**
-- Both platforms have **3 retry attempts**
+- All platforms have **3 retry attempts**
 - Built into adapter implementations
 
 ### **Tool Catalog**
-- Both use **50 tools** (full catalog)
+- All platforms use **50 tools** (full catalog)
 - No subsetting to ensure fair comparison
 
 ## ⚠️ **Important Notes**
@@ -151,13 +165,15 @@ Based on current results:
 |----------|-------------------|----------------------|-------------|
 | **CrewAI** | 78.0% | 0.0% | +78.0% |
 | **SMOLAgents** | 72.0% | 0.0% | +72.0% |
-| **Difference** | **+6.0%** | **0.0%** | **+6.0%** |
+| **LangGraph** | 67.3% | 0.0% | +67.3% |
+| **Best Performance** | **CrewAI** | **N/A** | **+78.0%** |
 
 **Key Insights**:
-- CrewAI slightly outperforms SMOLAgents (6 percentage points)
-- Both platforms show significant improvement with smart validation
-- K=2 complexity shows equal performance (85% each)
-- K=1 and K=3 show CrewAI advantage
+- CrewAI leads with 78.0% success rate
+- SMOLAgents follows with 72.0% success rate
+- LangGraph provides solid baseline with 67.3% success rate
+- All platforms show significant improvement with smart validation
+- Performance gap between platforms is relatively small (10.7 percentage points)
 
 ## 🔄 **Maintenance**
 
@@ -174,8 +190,24 @@ Based on current results:
 3. Test tool registration
 4. Re-run benchmarks
 
+## 📚 **Archive and Optimization**
+
+### **LangGraph Optimization Archive**
+- **Location**: `archive/langgraph_optimization_attempts/`
+- **Contents**: Complete documentation of LangGraph optimization attempts
+- **Purpose**: Reference for future optimization work
+- **Structure**:
+  - `adapters/`: Experimental LangGraph adapters
+  - `scripts/`: Test and benchmark scripts
+  - `docs/`: Documentation and analysis
+
+### **Archive Usage**
+- **Reference**: Review optimization attempts for future improvements
+- **Learning**: Understand what approaches were tried and their results
+- **Extension**: Build upon previous optimization work
+
 ---
 
-**Last Updated**: 2025-09-02
+**Last Updated**: 2025-01-02
 **Framework Version**: v1.0
-**Supported Platforms**: CrewAI, SMOLAgents, Mock
+**Supported Platforms**: CrewAI, SMOLAgents, LangGraph, Mock
