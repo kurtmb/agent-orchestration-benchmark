@@ -1,6 +1,153 @@
 {
   "runs": [
     {
+      "run_id": "run_000001_20250906_110202",
+      "start_time": "2025-09-06T11:02:02.662297",
+      "end_time": "2025-09-06T11:07:13.557161",
+      "status": "completed",
+      "platforms": [
+        "langgraph_react_enhanced"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_110202.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_110202.json"
+    },
+    {
+      "run_id": "run_000001_20250906_104450",
+      "start_time": "2025-09-06T10:44:50.857188",
+      "end_time": "2025-09-06T10:48:55.266410",
+      "status": "completed",
+      "platforms": [
+        "langgraph_improved"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_104450.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_104450.json"
+    },
+    {
+      "run_id": "run_000001_20250906_101211",
+      "start_time": "2025-09-06T10:12:11.053097",
+      "end_time": "2025-09-06T10:15:57.484762",
+      "status": "completed",
+      "platforms": [
+        "langgraph_optimized_v3"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_101211.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_101211.json"
+    },
+    {
+      "run_id": "run_000001_20250906_093328",
+      "start_time": "2025-09-06T09:33:28.723208",
+      "end_time": "2025-09-06T09:38:30.944090",
+      "status": "completed",
+      "platforms": [
+        "langgraph_optimized_simple"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_093328.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_093328.json"
+    },
+    {
+      "run_id": "run_000001_20250906_090755",
+      "start_time": "2025-09-06T09:07:55.686975",
+      "end_time": "2025-09-06T09:12:24.716371",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_090755.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_090755.json"
+    },
+    {
+      "run_id": "run_000001_20250906_085953",
+      "start_time": "2025-09-06T08:59:53.918777",
+      "end_time": "2025-09-06T09:05:10.130398",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_085953.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_085953.json"
+    },
+    {
+      "run_id": "run_000001_20250906_085003",
+      "start_time": "2025-09-06T08:50:03.083098",
+      "end_time": "2025-09-06T08:55:14.263155",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        50
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250906_085003.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250906_085003.json"
+    },
+    {
       "run_id": "run_000001_20250905_172507",
       "start_time": "2025-09-05T17:25:07.143100",
       "end_time": "2025-09-05T17:43:49.586546",

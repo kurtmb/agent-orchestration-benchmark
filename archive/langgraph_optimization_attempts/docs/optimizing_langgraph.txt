@@ -1,0 +1,320 @@
+# LangGraph Agentic Orchestration Benchmark — Configuration Playbook
+
+**Scope:** 50 tools × 50 test cases (each with expected outputs). Optimize for accuracy, latency, throughput, and reproducibility.
+
+---
+
+## 1) Quick-start checklist
+
+* [ ] **Typed state with reducers** for any keys updated by multiple nodes (e.g., `messages`).
+* [ ] **Tool scoping**: never expose all 50 tools at once; route to small domain buckets.
+* [ ] **Supervisor + subgraphs** (or “supervisor-as-tool-calling” pattern) for routing.
+* [ ] **Parallelize only independent work** (fan-out/fan-in; map-reduce).
+* [ ] **Checkpointing** enabled (SQLite locally; Postgres in CI/distrib).
+* [ ] **Streaming** enabled for timing/observability.
+* [ ] **Guards:** `should_continue`, `max_steps`, output validator/normalizer.
+* [ ] **Retries/timeouts** on tool wrappers; **concurrency caps** to respect rate limits.
+* [ ] **Context limits**: running summary + last-K messages.
+* [ ] **Determinism** for evals: temperature 0; fixed prompts; fixed routes.
+
+---
+
+## 2) Graph design in a nutshell
+
+### 2.1 State
+
+Use a typed state so you can compose safely across parallel branches.
+
+```python
+from typing import TypedDict, Annotated, Sequence
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
+
+class AgentState(TypedDict):
+    messages: Annotated[Sequence[BaseMessage], add_messages]
+    plan: list[str]            # optional scratchpad
+    evidence: list[str]        # optional scratchpad
+    result: str | None         # final answer (normalized)
+```
+
+**Why reducers?** `add_messages` merges messages from parallel branches without clobbering order/safety.
+
+### 2.2 Nodes & routing
+
+* One **agent node** (LLM) that decides whether to call tools.
+* **Domain tool nodes** (5–10 buckets): retrieval, math, code, web/io, calendaring, data viz, etc.
+* A **router** (supervisor) that picks which bucket to enter when tool use is requested.
+
+### 2.3 Minimal step loop
+
+* Agent → (if tool call) Route → ToolNode → Agent → … until `should_continue` is false or `max_steps` reached → Validator/Normalizer → END.
+
+---
+
+## 3) Tool scoping & supervisor pattern
+
+**Do not** bind all 50 tools to every model call. Group them into **domain buckets** (typically 5–10). Examples:
+
+* *Retrieval & RAG*: vector search, web search, file loaders
+* *Math & calc*: Python exec-sandbox, structured calc, units/convert
+* *Calendaring & productivity*: calendar read, email fetch (read-only), task DB
+* *Code & eval*: code-run (sandbox), package metadata, formatting
+* *I/O & data*: CSV/JSON parsers, charting/exporters
+
+Use a **supervisor** router that returns the next node name based on the last message (intent classification via simple heuristics or a tiny LLM call). For highly modular stacks, you can also use the **supervisor-as-tool-calling** pattern (sub-agents exposed as tools).
+
+---
+
+## 4) Parallelism (fan-out/fan-in)
+
+Only parallelize **independent** calls (e.g., hitting three retrieval sources at once). Reduce with a deterministic combiner that dedupes/merges results. Cap concurrency with a semaphore/pool to stay under provider limits.
+
+---
+
+## 5) Checkpointing & run management
+
+Enable a checkpointer so each test case is reproducible and resumable.
+
+* **Local/single-process**: SQLite checkpointer
+* **CI or multi-worker**: Postgres checkpointer
+
+Use a **unique** `thread_id` per test case. Store streamed updates for auditing (node timings, tool args, partial states).
+
+---
+
+## 6) Streaming & instrumentation
+
+Use `stream(..., stream_mode="updates")` to capture node-by-node timestamps, tool latencies, and final values. Persist these logs (JSONL or DB) for your benchmark report.
+
+---
+
+## 7) Guards, validation, and normalization
+
+* **should\_continue**: after every agent step, stop if there are no tool calls requested.
+* **max\_steps**: prevent loops (e.g., 6–8 is typical for tool tasks).
+* **Validator** (last node): enforce schema/regex or compare against expected-output template; normalize whitespace, field order, and number formats for fair scoring.
+* **Interrupts** (optional): place before any risky/side-effect tool to allow manual approval during exploratory runs.
+
+---
+
+## 8) Reliability controls
+
+* **Timeouts & retries**: set per-tool timeouts; retry once on transient failures. Fail fast and surface provenance.
+* **Concurrency caps**: limit parallel branches/tools to stay within API quotas.
+* **Idempotence**: ensure tools are read-only in benchmarking mode (or stub them).
+
+---
+
+## 9) Context & cost control
+
+* Keep a **running summary** in state; include only last-K messages per step.
+* Keep system prompts **short and domain-specific**; avoid mega-prompts.
+
+---
+
+## 10) Determinism for fair comparisons
+
+* `temperature=0`
+* fixed prompts & tool bucket membership
+* fixed `max_steps`
+* unique `thread_id` per case
+
+---
+
+## 11) Reference implementation (Python)
+
+> Drop this into your codebase and adapt names/imports to your environment.
+
+```python
+from typing import TypedDict, Annotated, Sequence
+from operator import add
+from langchain_core.messages import BaseMessage, HumanMessage
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode
+
+# -----------------
+# 1) Typed state
+# -----------------
+class AgentState(TypedDict):
+    messages: Annotated[Sequence[BaseMessage], add_messages]
+    plan: Annotated[list[str], add]
+    evidence: Annotated[list[str], add]
+    result: str | None
+
+# -----------------
+# 2) Tools (bucketed)
+# -----------------
+retrieval_tools = []  # fill with your retrieval tools
+math_tools = []       # fill with your math tools
+io_tools = []         # fill with your IO/data tools
+# ... add more buckets as needed
+
+retrieval_node = ToolNode(retrieval_tools)
+math_node = ToolNode(math_tools)
+io_node = ToolNode(io_tools)
+
+# -----------------
+# 3) Router & agent
+# -----------------
+# Use your preferred tool-calling chat model; keep temperature 0 for evals
+from langchain_openai import ChatOpenAI  # or your provider
+model = ChatOpenAI(model="gpt-4o-mini", temperature=0)  # example
+
+
+def router(state: AgentState) -> str:
+    """Return the name of the next domain node based on intent."""
+    text = state["messages"][-1].content.lower()
+    if any(k in text for k in ["sum", "calc", "average", "median"]):
+        return "math"
+    if any(k in text for k in ["search", "fetch", "retrieve", "lookup"]):
+        return "retrieval"
+    return "io"
+
+
+def agent_step(state: AgentState):
+    """One LLM step. If it calls tools, ToolNode(s) will run next."""
+    resp = model.invoke(state["messages"])  # tool-calling model
+    return {"messages": [resp]}
+
+
+def should_continue(state: AgentState):
+    last = state["messages"][ -1]
+    has_tools = getattr(last, "tool_calls", None)
+    return "route" if has_tools else END
+
+# -----------------
+# 4) Build graph
+# -----------------
+graph = StateGraph(AgentState)
+
+graph.add_node("agent", agent_step)
+
+graph.add_node("retrieval", retrieval_node)
+
+graph.add_node("math", math_node)
+
+graph.add_node("io", io_node)
+
+# main flow
+graph.add_edge(START, "agent")
+
+# if agent wants tools → route; else END
+graph.add_conditional_edges("agent", should_continue, ["route", END])
+
+# route to a domain bucket, then back to agent
+graph.add_conditional_edges("agent", lambda s: "route", ["route"])  # marker
+
+graph.add_conditional_edges("route", router, ["retrieval", "math", "io"])
+
+graph.add_edge("retrieval", "agent")
+
+graph.add_edge("math", "agent")
+
+graph.add_edge("io", "agent")
+
+# Optional: validator/normalizer node before END
+
+def normalize(state: AgentState):
+    # enforce schema/cleanup for scoring
+    # e.g., strip whitespace, sort keys, fix number formats
+    return state
+
+# graph.add_node("normalize", normalize)
+# graph.add_edge("agent", "normalize")
+# graph.add_edge("normalize", END)
+
+# -----------------
+# 5) Checkpointing (choose one)
+# -----------------
+# SQLite (local/single-process)
+# from langgraph.checkpoint.sqlite import SqliteSaver
+# import sqlite3
+# checkpointer = SqliteSaver(sqlite3.connect("benchmark_state.sqlite"))
+
+# Postgres (CI/distributed)
+# from langgraph.checkpoint.postgres import PostgresSaver
+# checkpointer = PostgresSaver.from_conn_string(os.environ["PG_URL"])
+
+app = graph.compile( # checkpointer=checkpointer
+)
+
+# -----------------
+# 6) Running a single test case
+# -----------------
+# Provide a unique thread_id for each test for reproducibility
+
+def run_case(case_id: str, prompt: str):
+    config = {"configurable": {"thread_id": case_id}, "recursion_limit": 8}
+    # Stream updates for timings/observability
+    updates = app.stream({"messages": [HumanMessage(content=prompt)]},
+                         config=config,
+                         stream_mode="updates")
+    trace = []
+    for u in updates:
+        trace.append(u)  # capture node timings, tool args, partial state
+    final = app.get_state(config).values  # final state after stream ends
+    return final, trace
+```
+
+> **Note**: If you plan large fan-outs, consider the LangGraph Send/Map-Reduce APIs in a dedicated subgraph (fan-out node → parallel tool calls → reducer node). Always add a concurrency limiter around external API calls.
+
+---
+
+## 12) Benchmark harness (50 cases)
+
+1. Create a CSV/JSON of test cases: `id`, `prompt`, `expected`.
+2. For each case:
+
+   * Call `run_case(case_id, prompt)`
+   * Normalize `final["result"]`
+   * Score vs. `expected` (exact/regex/semantic as appropriate)
+   * Record: total latency, tokens in/out (from provider metadata if available), number of tool calls, per-node timings from `trace`.
+3. Write results to CSV + JSONL for later analysis. Include failures/timeouts explicitly.
+
+**Tip:** Parallelize across test cases at the **process level** (e.g., a small worker pool) to saturate throughput without blasting provider rate limits. Keep per-tool concurrency caps.
+
+---
+
+## 13) Output validation & normalization recipe (example)
+
+* Trim & normalize whitespace.
+* Canonicalize number formats (fixed decimals) and date formats (ISO-8601) if relevant.
+* Sort JSON object keys for stable diffs.
+* For structured outputs, prefer a Pydantic model and re-serialize with your canonical encoder.
+
+---
+
+## 14) Suggested domain buckets for 50 tools
+
+* **Retrieval/RAG**: web, vector DB, file loaders, QA re-ranker
+* **Math/Calc**: numeric compute, units conversion, stats helpers
+* **Code/Dev**: sandbox exec, formatter, doc search
+* **Calendaring/Productivity**: calendar/email (read-only), task DB
+* **Data I/O**: CSV/JSON parsers, chart/exporter utilities
+* **Web/IO** (HTTP): fetch, scrape, rate-limited APIs
+* **Misc. Utilities**: string ops, regex, date/time, geo
+
+---
+
+## 15) Common pitfalls to avoid
+
+* Exposing all tools simultaneously → higher latency + hallucinated tool calls.
+* No `max_steps` → loops.
+* No checkpointing → non-reproducible runs and painful debugging.
+* Fan-out without concurrency caps → throttling/5xx storms.
+* Skipping normalization → flaky scoring.
+
+---
+
+## 16) What to tune first (highest ROI)
+
+1. **Tool scoping** (domain buckets)
+2. **Context pruning** (summary + last-K)
+3. **Parallelize the right steps** (fan-out retrieval)
+4. **Strict schemas** for tool inputs/outputs
+5. **Good validator/normalizer** (stabilizes evals)
+
+---
+
+*End of playbook.*

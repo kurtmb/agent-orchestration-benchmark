@@ -8,7 +8,8 @@ and provides a consistent interface for testing.
 import os
 import threading
 import time
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Union
+from pydantic import SkipValidation
 from datetime import datetime
 
 from langchain_openai import ChatOpenAI
@@ -81,8 +82,316 @@ class LangGraphToolWrapper:
                     return result
                 except Exception as e:
                     return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "REGEX_EXTRACT":
+            # Regex extract tool needs text and pattern
+            @tool(self.name, return_direct=False)
+            def wrapped_tool(text: str, pattern: str, flags: str = ""):
+                """Extract first match from regex pattern. flags supports 'i' (ignorecase)."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"text": text, "pattern": pattern, "flags": flags})
+                    return result
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "REGEX_MATCH":
+            # Regex match tool needs text and pattern
+            @tool(self.name, return_direct=False)
+            def wrapped_tool(text: str, pattern: str, flags: str = ""):
+                """Boolean match for pattern and flags. flags supports 'i' (ignorecase)."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"text": text, "pattern": pattern, "flags": flags})
+                    return result
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["CONCAT", "REPLACE"]:
+            # String manipulation tools
+            if self.name == "CONCAT":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(a: str, b: str):
+                    """Concatenate two strings: a + b"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"a": a, "b": b})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # REPLACE
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str, find: str, replace: str):
+                    """Replace all occurrences of 'find' with 'replace' in text"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text, "find": find, "replace": replace})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["LIST_LEN", "LIST_GET", "LIST_SLICE", "LIST_SORT", "LIST_UNIQUE"]:
+            # List tools
+            if self.name == "LIST_LEN":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list):
+                    """Get length of array"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "LIST_GET":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list, index: int):
+                    """Get item at index from array (supports negative indices)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr, "index": index})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "LIST_SLICE":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list, start: int, end: int = None):
+                    """Slice array by [start, end) (end optional)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr, "start": start, "end": end})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "LIST_SORT":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list, order: str = "asc"):
+                    """Sort array (numbers or strings only). order: 'asc' or 'desc'"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr, "order": order})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # LIST_UNIQUE
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list):
+                    """Get unique values preserving first occurrence order"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["MERGE", "PICK", "OMIT", "GET_PATH", "SET_PATH"]:
+            # Object tools
+            if self.name == "MERGE":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(a: dict, b: dict):
+                    """Shallow merge objects (B overwrites A)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"a": a, "b": b})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "PICK":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(o: dict, keys: list):
+                    """Pick subset of keys from object"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "keys": keys})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "OMIT":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(o: dict, keys: list):
+                    """Omit keys from object (returns new object)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "keys": keys})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "GET_PATH":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(o: dict, path: str):
+                    """Get nested value by JSON-pointer-like path"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "path": path})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # SET_PATH
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(o: dict, path: str, value: SkipValidation):
+                    """Pure set: returns new object with value at path"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "path": path, "value": value})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["TO_STRING", "PARSE_INT", "HASH_SHA256", "BASE64_ENCODE", "BASE64_DECODE"]:
+            # Encoding & misc tools
+            if self.name == "TO_STRING":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(value: SkipValidation):
+                    """JSON-stringify a value"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"value": value})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "PARSE_INT":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str):
+                    """Parse base-10 integer from string"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "HASH_SHA256":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str):
+                    """SHA-256 hash of UTF-8 input string"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "BASE64_ENCODE":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str):
+                    """Base64 encode UTF-8 input"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # BASE64_DECODE
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str):
+                    """Decode base64 to UTF-8 string"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["PREFIX", "SUFFIX", "NUM_TO_FIXED", "JOIN", "SPLIT"]:
+            # Formatting tools
+            if self.name == "PREFIX":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str, prefix: str):
+                    """Ensure string starts with prefix (no duplicates)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text, "prefix": prefix})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "SUFFIX":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str, suffix: str):
+                    """Ensure string ends with suffix (no duplicates)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text, "suffix": suffix})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "NUM_TO_FIXED":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(x: float, digits: int):
+                    """Format number with fixed decimals"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"x": x, "digits": digits})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "JOIN":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(arr: list, sep: str):
+                    """Join array of strings with separator"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"arr": arr, "sep": sep})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # SPLIT
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(text: str, sep: str):
+                    """Split string by separator"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"text": text, "sep": sep})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["CLAMP", "RANGE"]:
+            # Additional math helpers
+            if self.name == "CLAMP":
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(x: float, min: float, max: float):
+                    """Clamp x into [min, max]"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"x": x, "min": min, "max": max})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # RANGE
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(start: int, end: int, step: int = 1):
+                    """Create integer range [start, end) step>0"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"start": start, "end": end, "step": step})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["GT", "GTE", "LT", "LTE", "EQ", "NOT"]:
+            # Comparison & logic tools
+            if self.name in ["GT", "GTE", "LT", "LTE", "EQ"]:
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(a: SkipValidation, b: SkipValidation):
+                    """Comparison operation"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"a": a, "b": b})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # NOT
+                @tool(self.name, return_direct=False)
+                def wrapped_tool(x: bool):
+                    """Logical NOT of boolean x"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"x": x})
+                        return result
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["ROUND"]:
+            # Rounding tools
+            @tool(self.name, return_direct=False)
+            def wrapped_tool(x: float, digits: int = 0):
+                """Round number to specified digits (default 0)"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"x": x, "digits": digits})
+                    return result
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
         else:
-            # Default wrapper for other tools
+            # Fallback for any remaining tools - use **kwargs but with warning
+            print(f"⚠️  Warning: Tool {self.name} using fallback **kwargs wrapper - may cause schema issues")
             @tool(self.name, return_direct=False)
             def wrapped_tool(**kwargs):
                 """Wrapper for benchmark tool."""
@@ -130,6 +439,9 @@ class LangGraphAdapter(OrchestratorAdapter):
         # Convert tools to LangGraph format
         self.langgraph_tools, self.tool_wrappers = self._convert_tools_to_langgraph(tools)
         
+        # Validate tool schemas (debugging)
+        self._validate_tool_schemas()
+        
         # Create the agent
         self._create_agent()
     
@@ -153,6 +465,18 @@ class LangGraphAdapter(OrchestratorAdapter):
         
         return langgraph_tools, tool_wrappers
     
+    def _validate_tool_schemas(self):
+        """Validate tool schemas for debugging purposes."""
+        print("🔍 Validating tool schemas...")
+        for t in self.langgraph_tools:
+            try:
+                schema_info = getattr(t, "args", None) or getattr(t, "args_schema", None) or getattr(t, "schema", None)
+                json_schema = getattr(t, "json_schema", lambda: None)()
+                print(f"  {t.name}: args={schema_info}, json_schema={json_schema}")
+            except Exception as e:
+                print(f"  {t.name}: schema introspection failed: {e}")
+        print("✅ Tool schema validation complete")
+    
     def _get_total_tool_calls(self):
         """Get the total number of tool calls made during execution."""
         return sum(wrapper.call_count for wrapper in self.tool_wrappers)
@@ -173,6 +497,9 @@ class LangGraphAdapter(OrchestratorAdapter):
                 api_key=os.getenv("OPENAI_API_KEY")
             )
             
+            # Bind tools with parallel calls disabled to prevent hidden multi-tool steps
+            self.llm = self.llm.bind_tools(self.langgraph_tools, parallel_tool_calls=False)
+            
             # Initialize token tracker
             model_name = get_model_name_from_llm(self.llm)
             self.token_tracker = TokenTracker(model_name)
@@ -183,7 +510,11 @@ class LangGraphAdapter(OrchestratorAdapter):
                 "IMPORTANT: When you produce the FINAL answer to the user, "
                 "return ONLY the result value directly. Do not wrap it in JSON, "
                 "quotes, or add extra formatting. Just return the answer as a "
-                "simple value. Use tools as needed to complete the task."
+                "simple value. Use tools as needed to complete the task.\n\n"
+                "STOP RULES:\n"
+                "1. If you have the answer, do not call any tool. Reply with exactly the expected format and stop.\n"
+                "2. If you repeat the same tool with the same arguments twice without new information, stop and return your best answer.\n"
+                "3. Do not call more than 20 tools total."
             )
             
             self.agent = create_react_agent(
@@ -193,8 +524,8 @@ class LangGraphAdapter(OrchestratorAdapter):
                 name="benchmark_agent"
             )
             
-            # Increase recursion limit to handle complex tasks
-            self.agent = self.agent.with_config({"recursion_limit": 50})
+            # Set recursion limit to match benchmark max_steps (will be overridden per episode)
+            self.agent = self.agent.with_config({"recursion_limit": 20})
             
             print(f"✅ LangGraph agent created with {len(self.langgraph_tools)} tools")
             
@@ -231,7 +562,7 @@ class LangGraphAdapter(OrchestratorAdapter):
                 print(f"🔄 LangGraph attempt {attempt + 1}/{max_retries} for: {task_prompt[:100]}...")
                 
                 # Run with timeout protection
-                result = self._run_with_timeout(task_prompt, timeout_seconds)
+                result = self._run_with_timeout(task_prompt, timeout_seconds, max_steps)
                 
                 if result is None:
                     raise Exception("Task execution returned no result")
@@ -357,7 +688,7 @@ class LangGraphAdapter(OrchestratorAdapter):
         self.execution_history.append(error_result)
         return error_result
     
-    def _run_with_timeout(self, task_prompt: str, timeout_seconds: int):
+    def _run_with_timeout(self, task_prompt: str, timeout_seconds: int, max_steps: int = 20):
         """Run the task with timeout protection."""
         result = None
         execution_error = None
@@ -365,10 +696,16 @@ class LangGraphAdapter(OrchestratorAdapter):
         def run_with_timeout():
             nonlocal result, execution_error
             try:
-                # Invoke the agent
+                # Configure agent with episode-specific recursion limit
+                config = {
+                    "recursion_limit": max_steps,
+                    "configurable": {"thread_id": f"episode_{int(time.time())}"}
+                }
+                
+                # Invoke the agent with proper configuration
                 response = self.agent.invoke({
                     "messages": [("user", task_prompt)]
-                })
+                }, config=config)
                 
                 # Extract the final message content
                 if "messages" in response and len(response["messages"]) > 0:

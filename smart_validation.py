@@ -76,6 +76,31 @@ def find_most_recent_benchmark_run_from_index(index_path: str) -> Tuple[List[Dic
         # Filter results for SMOLAgents platform
         filtered_results = [r for r in all_results if r.get('platform') == 'smolagents']
         print(f"Analyzing {len(filtered_results)} smolagents tasks from run {run_id}")
+    elif 'langgraph_optimized_v3' in platforms:
+        platform = 'langgraph_optimized_v3'
+        # Filter results for optimized LangGraph v3 platform
+        filtered_results = [r for r in all_results if r.get('platform') == 'langgraphoptimizedv3']
+        print(f"Analyzing {len(filtered_results)} langgraph_optimized_v3 tasks from run {run_id}")
+    elif 'langgraph_improved' in platforms:
+        platform = 'langgraph_improved'
+        # Filter results for improved LangGraph platform
+        filtered_results = [r for r in all_results if r.get('platform') == 'langgraphimproved']
+        print(f"Analyzing {len(filtered_results)} langgraph_improved tasks from run {run_id}")
+    elif 'langgraph_react_enhanced' in platforms:
+        platform = 'langgraph_react_enhanced'
+        # Filter results for ReAct Enhanced LangGraph platform
+        filtered_results = [r for r in all_results if r.get('platform') == 'langgraphreactenhanced']
+        print(f"Analyzing {len(filtered_results)} langgraph_react_enhanced tasks from run {run_id}")
+    elif 'langgraph_optimized_simple' in platforms:
+        platform = 'langgraph_optimized_simple'
+        # Filter results for optimized LangGraph platform
+        filtered_results = [r for r in all_results if r.get('platform') == 'langgraphoptimizedsimple']
+        print(f"Analyzing {len(filtered_results)} langgraph_optimized_simple tasks from run {run_id}")
+    elif 'langgraph' in platforms:
+        platform = 'langgraph'
+        # Filter results for LangGraph platform
+        filtered_results = [r for r in all_results if r.get('platform') == 'langgraph']
+        print(f"Analyzing {len(filtered_results)} langgraph tasks from run {run_id}")
     else:
         # Fallback to first platform
         platform = platforms[0] if platforms else "unknown"
