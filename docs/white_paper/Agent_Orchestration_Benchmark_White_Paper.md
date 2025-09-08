@@ -1,6 +1,6 @@
 # Agent Orchestration Benchmark: A Comprehensive Analysis of Multi-Agent Frameworks
 
-**Authors**: AI Agent Orchestration Benchmark Team  
+**Authors**: Kurt Boden  
 **Date**: September 2025  
 **Version**: 1.0
 

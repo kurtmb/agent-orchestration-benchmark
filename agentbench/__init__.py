@@ -6,4 +6,4 @@ by testing tool composition capabilities across different complexity levels.
 """
 
 __version__ = "1.0.0"
-__author__ = "Agent Testing Team"
+__author__ = "Kurt Boden"
