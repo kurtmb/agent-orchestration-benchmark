@@ -16,12 +16,15 @@ import openai
 from tqdm import tqdm
 from datetime import datetime
 
-def find_most_recent_benchmark_run_from_index(index_path: str) -> Tuple[List[Dict[str, Any]], str, str]:
+def find_most_recent_benchmark_run_from_index(index_path: str, target_run_id: Optional[str] = None) -> Tuple[List[Dict[str, Any]], str, str]:
     """
-    Find the most recent benchmark run from the run index.
+    Find the most recent benchmark run from the run index, or a specific run if target_run_id is provided.
     Returns: (results_for_latest_run, run_id, platform)
     """
-    print("Analyzing run index to find most recent run...")
+    if target_run_id:
+        print(f"Looking for specific run: {target_run_id}")
+    else:
+        print("Analyzing run index to find most recent run...")
     
     # Load the run index
     with open(index_path, 'r', encoding='utf-8') as f:
@@ -41,12 +44,26 @@ def find_most_recent_benchmark_run_from_index(index_path: str) -> Tuple[List[Dic
         status = run_info["status"]
         print(f"  {run_id}: {platforms} platforms, {task_count} tasks, started: {start_time}, status: {status}")
     
-    # The runs are already sorted by start time (newest first)
-    latest_run = runs[0]
-    run_id = latest_run["run_id"]
-    platforms = latest_run["platforms"]
-    
-    print(f"Most recent run identified: {run_id} (started at {latest_run['start_time']})")
+    # Find the target run
+    if target_run_id:
+        target_run = None
+        for run_info in runs:
+            if run_info["run_id"] == target_run_id:
+                target_run = run_info
+                break
+        
+        if not target_run:
+            raise ValueError(f"Run {target_run_id} not found in index")
+        
+        run_id = target_run["run_id"]
+        platforms = target_run["platforms"]
+        print(f"Target run identified: {run_id} (started at {target_run['start_time']})")
+    else:
+        # The runs are already sorted by start time (newest first)
+        latest_run = runs[0]
+        run_id = latest_run["run_id"]
+        platforms = latest_run["platforms"]
+        print(f"Most recent run identified: {run_id} (started at {latest_run['start_time']})")
     
     # Load the actual results from the CSV file
     results_dir = Path(index_path).parent / "runs"
@@ -531,11 +548,14 @@ def main():
     
     print(f"Found run index: {run_index_file}")
     
-    # Find the most recent benchmark run
+    # Check if a specific run ID was requested via environment variable
+    target_run_id = os.getenv('SMART_VALIDATION_RUN_ID')
+    
+    # Find the most recent benchmark run or specific run
     try:
-        latest_results, run_id, platform = find_most_recent_benchmark_run_from_index(run_index_file)
+        latest_results, run_id, platform = find_most_recent_benchmark_run_from_index(run_index_file, target_run_id)
     except Exception as e:
-        print(f"ERROR: Error finding latest run: {e}")
+        print(f"ERROR: Error finding run: {e}")
         sys.exit(1)
     
     if not latest_results:

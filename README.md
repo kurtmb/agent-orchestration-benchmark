@@ -1,19 +1,30 @@
 # Agent Orchestration Benchmarking Framework
 
-A comprehensive benchmarking framework for evaluating agent orchestration platforms like CrewAI, SMOLAgents, and LangGraph against standardized test suites with complete metrics tracking.
+A comprehensive benchmarking framework for evaluating agent orchestration platforms like CrewAI, SMOLAgents, LangGraph, and AutoGen against standardized test suites with complete metrics tracking.
+
+## 📄 **White Paper Available**
+
+**📖 [Agent Orchestration Benchmark White Paper](docs/white_paper/Agent_Orchestration_Benchmark_White_Paper.md)**
+
+Our comprehensive analysis of four leading agent orchestration frameworks across five critical dimensions: accuracy, semantic output quality, time to answer, cost efficiency, and ease of implementation.
+
+- **📊 [Executive Summary](docs/white_paper/White_Paper_Summary.md)**
+- **📈 [Detailed Data Appendix](docs/white_paper/White_Paper_Data_Appendix.md)**
 
 ## 🎯 **Project Overview**
 
 This framework provides a systematic way to compare different agent orchestration platforms by running them through identical test scenarios with deterministic fixtures, comprehensive logging, intelligent result validation, and complete research-ready metrics.
 
 ### **Key Achievements**
-- ✅ **CrewAI Integration**: Fully functional adapter with complete metrics tracking (78.0% success rate)
-- ✅ **SMOLAgents Integration**: Fully functional adapter with complete metrics tracking (72.0% success rate)
-- ✅ **LangGraph Integration**: Fully functional adapter with complete metrics tracking (67.3% success rate)
+- ✅ **CrewAI Integration**: Fully functional adapter with complete metrics tracking (80.7% true accuracy)
+- ✅ **SMOLAgents Integration**: Fully functional adapter with complete metrics tracking (74.7% true accuracy)
+- ✅ **LangGraph Integration**: Fully functional adapter with complete metrics tracking (67.3% true accuracy)
+- ✅ **AutoGen Integration**: Fully functional adapter with complete metrics tracking (76.0% true accuracy)
 - ✅ **50-Tool Test Suite**: Comprehensive mock tool catalog covering math, strings, lists, objects, and logic
 - ✅ **Smart Validation**: ChatGPT-powered result validation for intelligent correctness checking
 - ✅ **Complete Metrics**: Tool usage, cost tracking, configuration tracking, and performance analysis
 - ✅ **Research-Ready Data**: Academic-quality metrics for publication and analysis
+- ✅ **White Paper**: Comprehensive analysis published as research document
 - ✅ **Optimization Archive**: Comprehensive documentation of LangGraph optimization attempts
 
 ## 🏗️ **Architecture**
@@ -23,6 +34,7 @@ This framework provides a systematic way to compare different agent orchestratio
 - **`CrewAIAdapter`**: Production-ready CrewAI implementation with complete metrics
 - **`SMOLAgentsAdapter`**: Production-ready SMOLAgents implementation with complete metrics
 - **`LangGraphAdapter`**: Production-ready LangGraph implementation with complete metrics
+- **`AutoGenAdapter`**: Production-ready AutoGen implementation with complete metrics
 - **`TokenTracker`**: Comprehensive token counting and cost calculation utility
 - **`BenchmarkLogger`**: Structured logging with run isolation
 - **`TestMatrixRunner`**: Full benchmark execution engine
@@ -93,6 +105,9 @@ python run_benchmark_smolagents.py
 
 # Run LangGraph benchmark
 python run_benchmark_langgraph.py
+
+# Run AutoGen benchmark
+python run_benchmark_autogen.py
 ```
 
 **Note**: LangGraph optimization attempts have been archived in `archive/langgraph_optimization_attempts/` for reference.
@@ -129,6 +144,7 @@ python generate_final_stats.py
 - **CrewAI**: Full integration with tool tracking and cost analysis
 - **SMOLAgents**: Full integration with tool tracking and cost analysis
 - **LangGraph**: Full integration with tool tracking and cost analysis
+- **AutoGen**: Full integration with tool tracking and cost analysis
 
 ### **Tool Tracking**
 - **Accurate Counts**: Real-time tool call tracking (no hardcoded values)
@@ -149,34 +165,52 @@ python generate_final_stats.py
 
 ```
 agentbench/
-├── core/                    # Core framework components
-│   ├── adapters/           # Platform-specific adapters
-│   │   ├── crewai.py       # CrewAI integration
-│   │   ├── smolagents.py   # SMOLAgents integration
-│   │   └── langgraph.py    # LangGraph integration
-│   ├── runner.py           # Orchestration logic
-│   ├── token_tracker.py    # Cost and token tracking
-│   └── tool_tracker.py     # Tool usage tracking
-├── eval/                   # Benchmark execution
-│   ├── logger.py           # Results logging
-│   ├── oracle.py           # Validation logic
-│   └── run_matrix.py       # Test execution engine
-├── fixtures/               # Test data and tasks
-│   ├── tasks.v1.json       # Test task definitions
-│   └── values.json         # Mock data values
-├── tools/                  # Tool implementations
-│   ├── functions.py        # Function tools
-│   ├── registry.py         # Tool catalog
-│   └── variables.py        # Variable tools
-├── archive/                # Archived optimization attempts
-│   └── langgraph_optimization_attempts/
-│       ├── adapters/       # Experimental LangGraph adapters
-│       ├── scripts/        # Test and benchmark scripts
-│       └── docs/           # Documentation and analysis
-└── results/                # Benchmark results and analysis
-    ├── runs/               # Raw benchmark results
-    ├── transcripts/        # Execution transcripts
-    └── run_index.json      # Run metadata
+├── docs/                   # Documentation
+│   ├── white_paper/        # Research white paper and analysis
+│   │   ├── Agent_Orchestration_Benchmark_White_Paper.md
+│   │   ├── White_Paper_Data_Appendix.md
+│   │   └── White_Paper_Summary.md
+│   ├── implementation/     # Implementation documentation
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── AGENTS.md
+│   │   ├── SCRIPT_USAGE_GUIDE.md
+│   │   └── autogen_quick_guide.txt
+│   └── archive/            # Archived optimization attempts
+│       └── langgraph_optimization_attempts/
+│           ├── adapters/   # Experimental LangGraph adapters
+│           ├── scripts/    # Test and benchmark scripts
+│           └── docs/       # Documentation and analysis
+├── agentbench/             # Core framework components
+│   ├── core/               # Core framework components
+│   │   ├── adapters/       # Platform-specific adapters
+│   │   │   ├── crewai.py   # CrewAI integration
+│   │   │   ├── smolagents.py # SMOLAgents integration
+│   │   │   ├── langgraph.py # LangGraph integration
+│   │   │   └── autogen.py  # AutoGen integration
+│   │   ├── runner.py       # Orchestration logic
+│   │   ├── token_tracker.py # Cost and token tracking
+│   │   └── tool_tracker.py # Tool usage tracking
+│   ├── eval/               # Benchmark execution
+│   │   ├── logger.py       # Results logging
+│   │   ├── oracle.py       # Validation logic
+│   │   └── run_matrix.py   # Test execution engine
+│   ├── fixtures/           # Test data and tasks
+│   │   ├── tasks.v1.json   # Test task definitions
+│   │   └── values.json     # Mock data values
+│   └── tools/              # Tool implementations
+│       ├── functions.py    # Function tools
+│       ├── registry.py     # Tool catalog
+│       └── variables.py    # Variable tools
+├── results/                # Benchmark results and analysis
+│   ├── runs/               # Raw benchmark results
+│   ├── analysis/           # Analysis and comparison reports
+│   ├── smart_validation/   # Smart validation results
+│   ├── transcripts/        # Execution transcripts
+│   └── run_index.json      # Run metadata
+├── run_benchmark_*.py      # Benchmark execution scripts
+├── smart_validation.py     # Smart validation script
+├── compare_platforms.py    # Platform comparison script
+└── generate_final_stats.py # Statistics generation script
 ```
 
 ## 📊 **Results and Analysis**
@@ -224,10 +258,19 @@ agentbench/
 
 ## 📚 **Documentation**
 
-- **`IMPLEMENTATION_SUMMARY.md`**: Current implementation status
-- **`SCRIPT_USAGE_GUIDE.md`**: Detailed usage instructions
-- **`AGENTS.md`**: Agent-specific documentation
-- **`archive/langgraph_optimization_attempts/`**: LangGraph optimization attempts and analysis
+### **Research Documentation**
+- **📖 [White Paper](docs/white_paper/Agent_Orchestration_Benchmark_White_Paper.md)**: Comprehensive analysis of all four platforms
+- **📊 [Executive Summary](docs/white_paper/White_Paper_Summary.md)**: Quick overview of key findings
+- **📈 [Data Appendix](docs/white_paper/White_Paper_Data_Appendix.md)**: Detailed metrics and statistical analysis
+
+### **Implementation Documentation**
+- **`docs/implementation/IMPLEMENTATION_SUMMARY.md`**: Current implementation status
+- **`docs/implementation/SCRIPT_USAGE_GUIDE.md`**: Detailed usage instructions
+- **`docs/implementation/AGENTS.md`**: Agent-specific documentation
+- **`docs/implementation/autogen_quick_guide.txt`**: AutoGen integration guide
+
+### **Archive Documentation**
+- **`docs/archive/langgraph_optimization_attempts/`**: LangGraph optimization attempts and analysis
 
 ## 🎉 **Status: Production Ready**
 
@@ -243,10 +286,16 @@ The framework is now **complete and ready** for:
 
 ## 🏆 **Current Performance Results**
 
-| Platform | Smart Validation Success Rate | Key Strengths |
-|----------|------------------------------|---------------|
-| **CrewAI** | 78.0% | Best overall performance, robust tool calling |
-| **SMOLAgents** | 72.0% | Good performance, efficient execution |
-| **LangGraph** | 67.3% | Solid baseline, extensive optimization attempts documented |
+| Platform | True Accuracy (Smart Validation) | Key Strengths |
+|----------|----------------------------------|---------------|
+| **CrewAI** | 80.7% | Highest accuracy, most stable performance |
+| **AutoGen** | 76.0% | Best format tolerance, conversational AI |
+| **SMOLAgents** | 74.7% | Fastest execution, most cost-effective |
+| **LangGraph** | 67.3% | Most flexible, complex workflow support |
 
-**Note**: All platforms show significant improvement over exact string matching validation when using smart validation with ChatGPT.
+**Key Insights**: 
+- **Format Sensitivity**: AutoGen and SMOLAgents show 30%+ improvement with semantic validation
+- **Performance Trade-offs**: Each platform excels in different dimensions (accuracy, speed, cost, flexibility)
+- **Smart Validation**: Traditional exact-match validation severely underestimates platform capabilities
+
+**Note**: All platforms show significant improvement over exact string matching validation when using smart validation with ChatGPT. See the [White Paper](docs/white_paper/Agent_Orchestration_Benchmark_White_Paper.md) for detailed analysis.

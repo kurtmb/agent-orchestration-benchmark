@@ -1,0 +1,13 @@
+run_id,run_name,platform,total_tasks,originally_correct,originally_incorrect,smart_correct,smart_incorrect,original_success_rate,smart_success_rate,improvement_tasks,improvement_percentage
+run_000003_20250908_100005,CrewAI Run 1,crewai,50,50,0,41,9,100.0,82.0,-9,-18.0
+run_000003_20250908_101828,CrewAI Run 2,crewai,50,50,0,39,11,100.0,78.0,-11,-22.0
+run_000003_20250908_103556,CrewAI Run 3,crewai,50,50,0,41,9,100.0,82.0,-9,-18.0
+run_20250908_111352,SMOLAgents Run 1,smolagents,50,22,28,39,11,44.0,78.0,17,34.0
+run_20250908_112526,SMOLAgents Run 2,smolagents,50,22,28,37,13,44.0,74.0,15,30.0
+run_20250908_113151,SMOLAgents Run 3,smolagents,50,19,31,36,14,38.0,72.0,17,34.0
+run_000001_20250908_122711,LangGraph Run 1,langgraph,50,50,0,32,18,100.0,64.0,-18,-36.0
+run_000001_20250908_123416,LangGraph Run 2,langgraph,50,50,0,36,14,100.0,72.0,-14,-28.000000000000004
+run_000001_20250908_123901,LangGraph Run 3,langgraph,50,50,0,33,17,100.0,66.0,-17,-34.0
+run_20250908_124446,AutoGen Run 1,autogen,50,22,28,39,11,44.0,78.0,17,34.0
+run_20250908_130036,AutoGen Run 2,autogen,50,21,29,38,12,42.0,76.0,17,34.0
+run_20250908_131751,AutoGen Run 3,autogen,50,20,30,37,13,40.0,74.0,17,34.0

@@ -1,0 +1,17 @@
+COMPREHENSIVE PLATFORM ANALYSIS REPORT
+==================================================
+
+Generated: 2025-09-07 16:22:18.038426
+
+OVERALL PERFORMANCE SUMMARY
+------------------------------
+1. CREWAI: 78.0% (39/50)
+2. AUTOGEN: 76.0% (38/50)
+3. SMOLAGENTS: 70.0% (35/50)
+4. LANGGRAPH: 34.0% (17/50)
+
+Key Findings:
+- Best Performer: CREWAI (78.0%)
+- Performance Gap: 44.0%
+- All platforms show significant improvement with smart validation
+- AutoGen shows strong performance despite verbose output format

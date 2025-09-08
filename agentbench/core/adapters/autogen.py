@@ -1,295 +1,230 @@
 """
-SMOLAgents adapter for the agent benchmark framework.
+AutoGen adapter for the agent benchmark framework.
 
-This adapter wraps the benchmark tools to be compatible with SMOLAgents
+This adapter wraps the benchmark tools to be compatible with AutoGen
 and provides a consistent interface for testing.
 """
 
 import os
+import asyncio
+import threading
+import time
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 
-from smolagents.agents import ToolCallingAgent
-from smolagents.models import OpenAIModel
-from smolagents.tools import Tool
+from autogen_agentchat.agents import AssistantAgent
+from autogen_ext.models.openai import OpenAIChatCompletionClient
+from autogen_core.tools import FunctionTool
 
 from ..runner import OrchestratorAdapter, ExecutionResult, ToolCall
 from ...tools.registry import get_tool_by_name
 from ..token_tracker import TokenTracker, get_model_name_from_llm
 
 
-class SMOLAgentsToolWrapper(Tool):
-    """Wrapper to make benchmark tools compatible with SMOLAgents."""
+class AutoGenToolWrapper:
+    """Wrapper to make benchmark tools compatible with AutoGen."""
     
     def __init__(self, name: str, tool_func, description: str):
-        # Set required class attributes for SMOLAgents Tool
         self.name = name
-        self.description = description
-        
-        # Set input schema based on tool type
-        if name.startswith("GET_"):
-            # Variable tools expect a key
-            self.inputs = {
-                "key": {
-                    "type": "string",
-                    "description": "The key to look up"
-                }
-            }
-        elif name in ["ADD", "SUB", "MUL", "DIV", "MOD", "POW", "MIN", "MAX", "HYPOT"]:
-            # Math tools expect two numbers
-            self.inputs = {
-                "a": {
-                    "type": "number",
-                    "description": "First number"
-                },
-                "b": {
-                    "type": "number", 
-                    "description": "Second number"
-                }
-            }
-        elif name in ["ABS", "FLOOR", "CEIL", "SIGN"]:
-            # Single number tools
-            self.inputs = {
-                "x": {
-                    "type": "number",
-                    "description": "The number to process"
-                }
-            }
-        elif name == "ROUND":
-            # Round tool with optional digits
-            self.inputs = {
-                "x": {
-                    "type": "number",
-                    "description": "The number to round"
-                },
-                "digits": {
-                    "type": "integer",
-                    "description": "Number of decimal places (default 0)"
-                }
-            }
-        elif name in ["CONCAT"]:
-            # String concatenation
-            self.inputs = {
-                "a": {
-                    "type": "string",
-                    "description": "First string"
-                },
-                "b": {
-                    "type": "string",
-                    "description": "Second string"
-                }
-            }
-        elif name in ["UPPER", "LOWER", "TITLE_CASE", "TRIM"]:
-            # Single string tools
-            self.inputs = {
-                "text": {
-                    "type": "string",
-                    "description": "Text to process"
-                }
-            }
-        elif name == "REPLACE":
-            # Replace tool
-            self.inputs = {
-                "text": {
-                    "type": "string",
-                    "description": "Text to search in"
-                },
-                "find": {
-                    "type": "string",
-                    "description": "Text to find"
-                },
-                "replace": {
-                    "type": "string",
-                    "description": "Text to replace with"
-                }
-            }
-        elif name == "REGEX_EXTRACT":
-            # Regex extract tool
-            self.inputs = {
-                "text": {
-                    "type": "string",
-                    "description": "Text to search in"
-                },
-                "pattern": {
-                    "type": "string",
-                    "description": "Regex pattern to match"
-                },
-                "flags": {
-                    "type": "string",
-                    "description": "Regex flags (optional)"
-                }
-            }
-        elif name in ["GT", "GTE", "LT", "LTE", "EQ"]:
-            # Comparison tools
-            self.inputs = {
-                "a": {
-                    "type": "string",
-                    "description": "First value to compare"
-                },
-                "b": {
-                    "type": "string",
-                    "description": "Second value to compare"
-                }
-            }
-        elif name == "NOT":
-            # Boolean negation
-            self.inputs = {
-                "x": {
-                    "type": "boolean",
-                    "description": "Boolean value to negate"
-                }
-            }
-        elif name in ["LIST_LEN", "LIST_UNIQUE"]:
-            # List tools
-            self.inputs = {
-                "arr": {
-                    "type": "array",
-                    "description": "The array to process",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        elif name == "LIST_GET":
-            # List get tool
-            self.inputs = {
-                "arr": {
-                    "type": "array",
-                    "description": "The array to search in",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "index": {
-                    "type": "integer",
-                    "description": "Index position"
-                }
-            }
-        elif name == "LIST_SLICE":
-            # List slice tool
-            self.inputs = {
-                "arr": {
-                    "type": "array",
-                    "description": "The array to slice",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "start": {
-                    "type": "integer",
-                    "description": "Start index"
-                },
-                "end": {
-                    "type": "integer",
-                    "description": "End index (optional)"
-                }
-            }
-        elif name == "LIST_SORT":
-            # List sort tool
-            self.inputs = {
-                "arr": {
-                    "type": "array",
-                    "description": "The array to sort",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "order": {
-                    "type": "string",
-                    "description": "Sort direction: 'asc' or 'desc'"
-                }
-            }
-        elif name in ["MERGE"]:
-            # Object merge tool
-            self.inputs = {
-                "a": {
-                    "type": "object",
-                    "description": "First object to merge"
-                },
-                "b": {
-                    "type": "object",
-                    "description": "Second object to merge"
-                }
-            }
-        elif name in ["PICK", "OMIT"]:
-            # Object pick/omit tools
-            self.inputs = {
-                "o": {
-                    "type": "object",
-                    "description": "The object to process"
-                },
-                "keys": {
-                    "type": "array",
-                    "description": "Array of keys to pick or omit",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        elif name in ["GET_PATH", "SET_PATH"]:
-            # Path tools
-            self.inputs = {
-                "o": {
-                    "type": "object",
-                    "description": "The object to process"
-                },
-                "path": {
-                    "type": "string",
-                    "description": "JSON path to the value"
-                }
-            }
-        else:
-            # Default schema for other tools
-            self.inputs = {
-                "args": {
-                    "type": "string",
-                    "description": "Tool arguments as JSON string"
-                }
-            }
-        
-        self.output_type = "string"
-        
         self._tool_func = tool_func
+        self.description = description
         self.call_count = 0  # Track number of calls
-        super().__init__()
         
-        # Create a dynamic forward method based on the inputs
-        self._create_dynamic_forward()
+        # Create the AutoGen FunctionTool
+        self.autogen_tool = self._create_autogen_tool()
     
-    def _create_dynamic_forward(self):
-        """Create a dynamic forward method that matches the expected parameters."""
-        import types
+    def _create_autogen_tool(self):
+        """Create an AutoGen FunctionTool from the benchmark tool."""
         
-        def create_forward_method(input_keys):
-            def forward_method(self, **kwargs):
+        # Create the appropriate tool based on the tool name
+        if self.name.startswith("GET_"):
+            # Variable tools need a key parameter
+            def wrapped_tool(key: str) -> str:
+                """Wrapper for benchmark variable tool."""
                 try:
-                    self.call_count += 1  # Increment call count
-                    # Convert kwargs to the format expected by our tools
-                    # Our tools expect a dictionary, so we pass kwargs directly
+                    self.call_count += 1
+                    result = self._tool_func({"key": key})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["ADD", "SUB", "MUL", "DIV", "MOD", "POW", "MIN", "MAX", "HYPOT"]:
+            # Math tools need two numbers
+            def wrapped_tool(a: float, b: float) -> str:
+                """Wrapper for benchmark math tool."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"a": a, "b": b})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["ABS", "FLOOR", "CEIL", "SIGN"]:
+            # Single number tools
+            def wrapped_tool(x: float) -> str:
+                """Wrapper for benchmark single number tool."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"x": x})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["UPPER", "LOWER", "TITLE_CASE", "TRIM"]:
+            # String tools
+            def wrapped_tool(text: str) -> str:
+                """Wrapper for benchmark string tool."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"text": text})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "CONCAT":
+            # String concatenation
+            def wrapped_tool(a: str, b: str) -> str:
+                """Concatenate two strings: a + b"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"a": a, "b": b})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "REPLACE":
+            # String replacement
+            def wrapped_tool(text: str, find: str, replace: str) -> str:
+                """Replace all occurrences of 'find' with 'replace' in text"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"text": text, "find": find, "replace": replace})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["GT", "GTE", "LT", "LTE", "EQ"]:
+            # Comparison tools
+            def wrapped_tool(a: str, b: str) -> str:
+                """Comparison operation"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"a": a, "b": b})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "NOT":
+            # Boolean negation
+            def wrapped_tool(x: bool) -> str:
+                """Logical NOT of boolean x"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"x": x})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["LIST_LEN", "LIST_UNIQUE"]:
+            # List tools
+            def wrapped_tool(arr: list) -> str:
+                """List operation"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"arr": arr})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "LIST_GET":
+            # List get tool
+            def wrapped_tool(arr: list, index: int) -> str:
+                """Get item at index from array"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"arr": arr, "index": index})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "LIST_SLICE":
+            # List slice tool
+            def wrapped_tool(arr: list, start: int, end: int = None) -> str:
+                """Slice array by [start, end)"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"arr": arr, "start": start, "end": end})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name == "LIST_SORT":
+            # List sort tool
+            def wrapped_tool(arr: list, order: str = "asc") -> str:
+                """Sort array (numbers or strings only). order: 'asc' or 'desc'"""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"arr": arr, "order": order})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["MERGE", "PICK", "OMIT", "GET_PATH", "SET_PATH"]:
+            # Object tools
+            if self.name == "MERGE":
+                def wrapped_tool(a: dict, b: dict) -> str:
+                    """Shallow merge objects (B overwrites A)"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"a": a, "b": b})
+                        return str(result)
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name in ["PICK", "OMIT"]:
+                def wrapped_tool(o: dict, keys: list) -> str:
+                    """Object operation"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "keys": keys})
+                        return str(result)
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            elif self.name == "GET_PATH":
+                def wrapped_tool(o: dict, path: str) -> str:
+                    """Get nested value by JSON-pointer-like path"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "path": path})
+                        return str(result)
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+            else:  # SET_PATH
+                def wrapped_tool(o: dict, path: str, value: Any) -> str:
+                    """Pure set: returns new object with value at path"""
+                    try:
+                        self.call_count += 1
+                        result = self._tool_func({"o": o, "path": path, "value": value})
+                        return str(result)
+                    except Exception as e:
+                        return f"Error executing {self.name}: {str(e)}"
+        else:
+            # Fallback for any remaining tools - use a simple input parameter
+            def wrapped_tool(input_data: str = "") -> str:
+                """Wrapper for benchmark tool."""
+                try:
+                    self.call_count += 1
+                    # Parse input_data as JSON if it looks like JSON, otherwise use as-is
+                    import json
+                    try:
+                        if input_data.strip().startswith('{'):
+                            kwargs = json.loads(input_data)
+                        else:
+                            kwargs = {"input": input_data}
+                    except:
+                        kwargs = {"input": input_data}
                     result = self._tool_func(kwargs)
                     return str(result)
                 except Exception as e:
                     return f"Error executing {self.name}: {str(e)}"
-            
-            # Set the parameter names in the function signature
-            import inspect
-            sig = inspect.signature(forward_method)
-            new_params = [inspect.Parameter('self', inspect.Parameter.POSITIONAL_ONLY)]
-            for key in input_keys:
-                new_params.append(inspect.Parameter(key, inspect.Parameter.POSITIONAL_OR_KEYWORD))
-            
-            new_sig = sig.replace(parameters=new_params)
-            forward_method.__signature__ = new_sig
-            return forward_method
         
-        # Create the forward method with the correct parameters
-        input_keys = list(self.inputs.keys())
-        dynamic_forward = create_forward_method(input_keys)
-        self.forward = types.MethodType(dynamic_forward, self)
+        # Set the description and name
+        wrapped_tool.__doc__ = self.description
+        wrapped_tool.__name__ = self.name
+        
+        # Create FunctionTool
+        return FunctionTool(wrapped_tool, description=self.description, strict=False)
 
 
-class SMOLAgentsAdapter(OrchestratorAdapter):
-    """SMOLAgents platform adapter."""
+class AutoGenAdapter(OrchestratorAdapter):
+    """AutoGen platform adapter."""
     
     def __init__(self):
         # Initialize with empty tools, will be set later
@@ -299,7 +234,7 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
             llm_params={"temperature": 0.0, "top_p": 0}
         )
         
-        self.model = None
+        self.model_client = None
         self.agent = None
         self.execution_history = []
         self.token_tracker = None
@@ -358,7 +293,6 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
             'TITLE_CASE': 'Convert text to title case (first letter of each word capitalized). Use this for formatting names, titles, or headings. Args: {"text": "string"} - the text to convert to title case',
             'TRIM': 'Remove leading and trailing whitespace from text. Use this to clean up text that has extra spaces at the beginning or end. Args: {"text": "string"} - the text to trim',
             'REPLACE': 'Replace all occurrences of a substring in text. Use this when you need to substitute one text pattern with another. Args: {"text": "string", "find": "string", "replace": "string"} - the text to search in, the text to find, and the text to replace it with',
-            'REGEX_EXTRACT': 'Extract specific patterns from text using regular expressions. Use this when you need to find and extract numbers, dates, or other patterns from text. Args: {"text": "string", "pattern": "string", "flags": "string"} - the text to search in, the regex pattern, and optional flags',
             
             # List tools
             'LIST_LEN': 'Get the length of an array. Use this when you need to know how many items are in a list. Args: {"arr": "array"} - the array to measure',
@@ -373,79 +307,61 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
             'OMIT': 'Omit specified keys from an object (returns new object). Use this when you need to create a new object without certain properties. Args: {"o": "object", "keys": "array<string>"} - the object to omit from and the array of keys to exclude',
             'GET_PATH': 'Get a nested value by JSON-pointer-like path. Use this when you need to access deeply nested properties in an object. Args: {"o": "object", "path": "string"} - the object to search in and the path to the desired value',
             'SET_PATH': 'Pure set; returns a new object with value at path (does not mutate input). Use this when you need to create a new object with a modified value at a specific path. Args: {"o": "object", "path": "string", "value": "any"} - the object to modify, the path to set, and the new value',
-            
-            # Encoding & misc tools
-            'TO_STRING': 'Convert a value to a JSON string. Use this when you need to serialize a value for storage or transmission. Args: {"value": "any"} - the value to convert to a string',
-            'PARSE_INT': 'Parse a base-10 integer from a string. Use this when you need to convert a string representation of a number to an actual integer. Args: {"text": "string"} - the text to parse (reject non-integer strings)',
-            
-            # Hash & encode tools
-            'HASH_SHA256': 'Generate SHA-256 hash digest of UTF-8 input string. Use this when you need to create a cryptographic hash of text data. Args: {"text": "string"} - the text to hash',
-            'BASE64_ENCODE': 'Encode UTF-8 text to base64. Use this when you need to encode binary data or text for safe transmission. Args: {"text": "string"} - the text to encode',
-            'BASE64_DECODE': 'Decode base64 to UTF-8 string (reject invalid base64). Use this when you need to decode base64-encoded data back to its original form. Args: {"text": "string"} - the base64 text to decode',
-            
-            # Formatting & regex helpers
-            'PREFIX': 'Ensure a string starts with a specified prefix (no duplicates). Use this when you need to guarantee that text begins with certain characters. Args: {"text": "string", "prefix": "string"} - the text to modify and the prefix to ensure',
-            'SUFFIX': 'Ensure a string ends with a specified suffix (no duplicates). Use this when you need to guarantee that text ends with certain characters. Args: {"text": "string", "suffix": "string"} - the text to modify and the suffix to ensure',
-            'REGEX_MATCH': 'Check if text matches a regex pattern. Use this when you need to validate that text conforms to a specific pattern. Args: {"text": "string", "pattern": "string", "flags": "string"} - the text to test, the regex pattern, and optional flags',
-            
-            # Deterministic conversions
-            'NUM_TO_FIXED': 'Format a number with a fixed number of decimal places. Use this when you need to display numbers with consistent decimal precision. Args: {"x": "number", "digits": "integer"} - the number to format and the number of decimal places (0-10)',
-            'JOIN': 'Join an array of strings with a separator. Use this when you have a list of strings and want to create a single delimited string. Args: {"arr": "array<string>", "sep": "string"} - the array of strings to join and the separator to use',
-            'SPLIT': 'Split a string by a separator. Use this when you have a delimited string and want to break it into an array of parts. Args: {"text": "string", "sep": "string"} - the text to split and the separator to use',
-            
-            # Additional math helpers
-            'CLAMP': 'Clamp a number to a specified range. Use this when you need to ensure a value stays within minimum and maximum bounds. Args: {"x": "number", "min": "number", "max": "number"} - the value to clamp and the range boundaries',
-            'SIGN': 'Get the sign of a number (-1, 0, or 1). Use this when you need to determine if a number is positive, negative, or zero. Args: {"x": number} - the number to check the sign of',
-            'HYPOT': 'Calculate the hypotenuse of a right triangle. Use this when you have two sides of a right triangle and need to find the length of the hypotenuse. Args: {"a": "number", "b": "number"} - the two sides of the right triangle',
-            'RANGE': 'Create an integer range from start to end. Use this when you need to generate a sequence of consecutive integers. Args: {"start": "integer", "end": "integer", "step": "integer"} - the start value, end value, and step size (step > 0)'
         }
         
         return descriptions.get(tool_name, f"Tool: {tool_name}. Use this tool to perform operations.")
     
-    def _convert_tools_to_smolagents(self, tools: Dict[str, Any]) -> List[SMOLAgentsToolWrapper]:
-        """Convert benchmark tools to SMOLAgents-compatible tools."""
-        smolagents_tools = []
+    def _convert_tools_to_autogen(self, tools: Dict[str, Any]) -> List[AutoGenToolWrapper]:
+        """Convert benchmark tools to AutoGen-compatible tools."""
+        autogen_tools = []
         
         for tool_name, tool_func in tools.items():
             # Get rich description from the updated catalog
             description = self._get_rich_description(tool_name)
             
-            # Create SMOLAgents tool wrapper
-            smolagents_tool = SMOLAgentsToolWrapper(tool_name, tool_func, description)
-            smolagents_tools.append(smolagents_tool)
+            # Create AutoGen tool wrapper
+            autogen_tool = AutoGenToolWrapper(tool_name, tool_func, description)
+            autogen_tools.append(autogen_tool)
         
-        return smolagents_tools
+        return autogen_tools
     
-    def _create_model(self):
-        """Create the OpenAI model instance."""
+    def _create_model_client(self):
+        """Create the OpenAI model client."""
         api_key = os.getenv('OPENAI_API_KEY')
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable not set")
         
-        # Create model with minimal configuration
-        self.model = OpenAIModel(
-            model_id="gpt-4o-mini",
-            api_key=api_key,
-            temperature=0.0
+        # Create model client with minimal configuration
+        self.model_client = OpenAIChatCompletionClient(
+            model="gpt-4o-mini",
+            api_key=api_key
         )
         
+        # Add temperature attribute that AutoGen might expect
+        self.model_client.temperature = 0.0
+        
         # Initialize token tracker
-        model_name = get_model_name_from_llm(self.model)
+        model_name = get_model_name_from_llm(self.model_client)
         self.token_tracker = TokenTracker(model_name)
     
-    def _create_agent(self, tools: List[SMOLAgentsToolWrapper]):
-        """Create the SMOLAgents agent."""
-        if not self.model:
-            self._create_model()
+    def _create_agent(self, tools: List[AutoGenToolWrapper]):
+        """Create the AutoGen agent."""
+        if not self.model_client:
+            self._create_model_client()
         
-        self.agent = ToolCallingAgent(
-            tools=tools,
-            model=self.model,
-            max_steps=20  # Match CrewAI test
+        # Extract FunctionTool objects from wrappers
+        autogen_tools = [wrapper.autogen_tool for wrapper in tools]
+        
+        self.agent = AssistantAgent(
+            name="assistant",
+            model_client=self.model_client,
+            tools=autogen_tools,
+            reflect_on_tool_use=True,
+            max_tool_iterations=20  # Match other adapters
         )
     
     def run_episode(self, task_prompt: str, max_steps: int = 20, timeout_seconds: int = 300) -> ExecutionResult:
-        """Run a single task episode using SMOLAgents with retry logic and timeout protection."""
+        """Run a single task episode using AutoGen with retry logic and timeout protection."""
         if not self.agent:
             raise ValueError("Agent not initialized. Call register_tools first.")
         
@@ -464,21 +380,29 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
             try:
                 # Create a fresh agent for each attempt to ensure clean context
                 if attempt > 0:
-                    # Reduced verbosity
+                    print(f"🔄 Retry attempt {attempt}/{max_retries} for task: {task_prompt[:50]}...")
                     # Recreate agent with fresh context
-                    self._create_agent(self.agent.tools)
+                    self._create_agent(self.tool_wrappers)
                 
                 # Execute the task with timeout protection
-                import threading
-                import time
-                
                 result = None
                 execution_error = None
                 
                 def execute_agent():
                     nonlocal result, execution_error
                     try:
-                        result = self.agent.run(task_prompt, max_steps=20)
+                        # Run the agent asynchronously with enhanced prompt
+                        enhanced_prompt = self._enhance_task_prompt(task_prompt)
+                        async def run_async():
+                            return await self.agent.run(task=enhanced_prompt)
+                        
+                        # Run in event loop
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        try:
+                            result = loop.run_until_complete(run_async())
+                        finally:
+                            loop.close()
                     except Exception as e:
                         execution_error = e
                 
@@ -490,11 +414,11 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 execution_thread.join(timeout=task_timeout)
                 
                 if execution_thread.is_alive():
-                    # Reduced verbosity
-                    # Force the thread to stop (this is a bit aggressive but necessary)
+                    print(f"⏰ Task attempt {attempt + 1} timed out after {task_timeout}s")
+                    # Force the thread to stop
                     execution_thread.join(timeout=1)
                     if execution_thread.is_alive():
-                        # Reduced verbosity
+                        print(f"⚠️  Could not stop execution thread, treating as failure")
                         raise Exception(f"Task timeout after {task_timeout} seconds")
                 
                 if execution_error:
@@ -503,9 +427,11 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 if result is None:
                     raise Exception("Task execution returned no result")
                 
-                # Extract final output and tool calls from SMOLAgents result
-                final_output = self._extract_final_output_from_result(result)
+                # Extract tool usage information from AutoGen result
                 tool_calls = self._extract_tool_calls_from_result(result, attempt_start_time)
+                
+                # Extract final output from the result
+                final_output = self._extract_final_output_from_result(result)
                 
                 end_time = datetime.now()
                 wall_time = (end_time - start_time).total_seconds() * 1000
@@ -513,19 +439,16 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 # Get actual tool call count
                 actual_tool_calls = self._get_total_tool_calls()
                 
-                # Estimate token usage (SMOLAgents doesn't provide detailed token counts)
+                # Estimate token usage
                 prompt_tokens = self.token_tracker.count_tokens(task_prompt) if self.token_tracker else None
-                completion_tokens = self.token_tracker.count_tokens(final_output) if self.token_tracker else None
+                completion_tokens = self.token_tracker.count_tokens(str(result)) if self.token_tracker else None
                 tool_tokens = sum(self.token_tracker.track_tool_call(tc.tool_name, tc.arguments, str(tc.result)) 
                                 for tc in tool_calls) if self.token_tracker else None
                 usd_cost = self.token_tracker.calculate_cost(prompt_tokens or 0, completion_tokens or 0) if self.token_tracker else None
                 
                 # Get configuration
-                model_name = get_model_name_from_llm(self.model) if self.model else None
-                try:
-                    temperature = self.model.temperature if self.model else None
-                except Exception:
-                    temperature = None
+                model_name = get_model_name_from_llm(self.model_client) if self.model_client else None
+                temperature = self.model_client.temperature if self.model_client else None
                 
                 execution_result = ExecutionResult(
                     success=True,
@@ -551,7 +474,7 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 
                 # Log retry information
                 if attempt > 0:
-                    pass  # Reduced verbosity
+                    print(f"✅ Task succeeded on attempt {attempt + 1}")
                 
                 self.execution_history.append(execution_result)
                 return execution_result
@@ -567,9 +490,8 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 is_api_error = "api" in error_msg.lower() or "rate limit" in error_msg.lower() or "timeout" in error_msg.lower()
                 is_network_error = "ssl" in error_msg.lower() or "connection" in error_msg.lower() or "network" in error_msg.lower()
                 
-                # Reduced verbosity - only log on final failure
-                if attempt == max_retries:
-                    pass  # Reduced verbosity
+                print(f"❌ Attempt {attempt + 1} failed: {error_msg}")
+                print(f"   Error type: {'Iteration limit' if is_iteration_error else 'Context limit' if is_context_error else 'API/Other' if is_api_error else 'Network/SSL' if is_network_error else 'Other'}")
                 
                 # If this was the last attempt, return failure
                 if attempt == max_retries:
@@ -590,7 +512,7 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
                 
                 # Wait before retry (except on last attempt)
                 if attempt < max_retries:
-                    pass  # Reduced verbosity
+                    print(f"⏳ Waiting {retry_delay} seconds before retry...")
                     time.sleep(retry_delay)
         
         # This should never be reached, but just in case
@@ -610,10 +532,10 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
         return error_result
     
     def register_tools(self, tools: Dict[str, Any]):
-        """Register tools with the SMOLAgents adapter."""
-        smolagents_tools = self._convert_tools_to_smolagents(tools)
-        self.tool_wrappers = smolagents_tools  # Store tool wrappers for tracking
-        self._create_agent(smolagents_tools)
+        """Register tools with the AutoGen adapter."""
+        autogen_tools = self._convert_tools_to_autogen(tools)
+        self.tool_wrappers = autogen_tools  # Store tool wrappers for tracking
+        self._create_agent(autogen_tools)
     
     def _get_total_tool_calls(self) -> int:
         """Get the total number of tool calls made across all tools."""
@@ -627,91 +549,158 @@ class SMOLAgentsAdapter(OrchestratorAdapter):
             for tool in self.tool_wrappers:
                 tool.call_count = 0
     
-    def _extract_final_output_from_result(self, result) -> str:
-        """Extract the final output from SMOLAgents result."""
-        try:
-            # SMOLAgents result is typically a string or AgentText object
-            if isinstance(result, str):
-                return result
-            
-            # Handle SMOLAgents AgentText objects
-            if hasattr(result, 'content'):
-                return str(result.content)
-            
-            # If it's an object, look for common final answer patterns
-            if hasattr(result, 'final_answer'):
-                return str(result.final_answer)
-            
-            if hasattr(result, 'answer'):
-                return str(result.answer)
-            
-            if hasattr(result, 'result'):
-                return str(result.result)
-            
-            # If it's a dict, look for final answer keys
-            if isinstance(result, dict):
-                for key in ['final_answer', 'answer', 'result', 'output', 'response', 'content']:
-                    if key in result:
-                        return str(result[key])
-            
-            # Fallback to string conversion
-            return str(result)
-            
-        except Exception as e:
-            # If extraction fails, return the string representation
-            return str(result)
-    
-    def _extract_tool_calls_from_result(self, result, timestamp) -> List[ToolCall]:
-        """Extract tool calls from SMOLAgents result."""
-        tool_calls = []
-        
-        try:
-            # SMOLAgents doesn't provide detailed tool call history in the result
-            # We'll create a summary tool call based on the actual tool usage
-            actual_tool_calls = self._get_total_tool_calls()
-            
-            if actual_tool_calls > 0:
-                # Create a summary tool call
-                tool_calls.append(ToolCall(
-                    tool_name="smolagents_execution",
-                    arguments={"total_tool_calls": actual_tool_calls},
-                    result=f"Executed {actual_tool_calls} tool calls",
-                    timestamp=timestamp
-                ))
-            else:
-                # No tool calls made
-                tool_calls.append(ToolCall(
-                    tool_name="smolagents_execution",
-                    arguments={"task": "no_tools_used"},
-                    result="No tools were called during execution",
-                    timestamp=timestamp
-                ))
-                
-        except Exception as e:
-            # Fallback tool call
-            tool_calls.append(ToolCall(
-                tool_name="smolagents_execution",
-                arguments={"error": str(e)},
-                result="Error extracting tool calls",
-                timestamp=timestamp
-            ))
-        
-        return tool_calls
-    
     def set_system_prompt(self, prompt: str):
         """Set the system prompt for the agent."""
         self.system_prompt = prompt
-        # Note: SMOLAgents may handle system prompts differently
+        # Note: AutoGen may handle system prompts differently
     
     def set_llm_params(self, params: Dict[str, Any]):
         """Set LLM parameters."""
         self.llm_params = params
         self._validate_llm_params()
         
-        # Update the model if it exists
-        if self.model:
-            self.model.temperature = params.get('temperature', 0.0)
+        # Update the model client if it exists
+        if self.model_client:
+            self.model_client.temperature = params.get('temperature', 0.0)
     
     def get_execution_history(self) -> List[ExecutionResult]:
         """Get history of all executions."""
         return self.execution_history.copy()
+    
+    def _extract_tool_calls_from_result(self, result, start_time: datetime) -> List[ToolCall]:
+        """Extract individual tool calls from AutoGen result."""
+        tool_calls = []
+        
+        if hasattr(result, 'messages'):
+            for message in result.messages:
+                if hasattr(message, 'content') and isinstance(message.content, list):
+                    for content_item in message.content:
+                        if hasattr(content_item, 'name') and hasattr(content_item, 'arguments'):
+                            # This is a tool call
+                            tool_calls.append(ToolCall(
+                                tool_name=content_item.name,
+                                arguments=content_item.arguments if isinstance(content_item.arguments, dict) else {},
+                                result=None,  # Will be filled by execution result
+                                timestamp=start_time
+                            ))
+                        elif hasattr(content_item, 'content') and hasattr(content_item, 'name'):
+                            # This is a tool execution result
+                            for tc in tool_calls:
+                                if tc.tool_name == content_item.name and tc.result is None:
+                                    tc.result = content_item.content
+                                    break
+        
+        return tool_calls
+    
+    def _extract_final_output_from_result(self, result) -> str:
+        """Extract the final output from AutoGen result."""
+        if hasattr(result, 'messages') and result.messages:
+            # Get the last message from the assistant
+            for message in reversed(result.messages):
+                if hasattr(message, 'source') and message.source == 'assistant':
+                    if hasattr(message, 'content'):
+                        content = message.content
+                        if isinstance(content, str):
+                            # Clean up the content - remove TERMINATE and extra formatting
+                            content = content.replace('TERMINATE', '').strip()
+                            
+                            # Try enhanced extraction as fallback (shouldn't be needed with better prompts)
+                            extracted = self._extract_result_from_verbose_output(content)
+                            if extracted:
+                                return extracted
+                            
+                            # Try to extract just the result value from quotes
+                            if '"' in content:
+                                import re
+                                quoted_matches = re.findall(r'"([^"]*)"', content)
+                                if quoted_matches:
+                                    return quoted_matches[-1]  # Return the last quoted value
+                            return content
+                        break
+        
+        # Fallback to string representation
+        return str(result)
+    
+    def _extract_result_from_verbose_output(self, content: str) -> str:
+        """Extract the actual result from verbose AutoGen output."""
+        import re
+        
+        # Pattern 1: "The sum of X and Y is Z." -> extract Z
+        sum_pattern = r'The sum of [^.]* is ([^.]*)\.?$'
+        match = re.search(sum_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 2: "The product of X and Y is Z." -> extract Z
+        product_pattern = r'The product of [^.]* is ([^.]*)\.?$'
+        match = re.search(product_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 3: "The result of dividing X by Y is Z." -> extract Z
+        division_pattern = r'The result of dividing [^.]* is ([^.]*)\.?$'
+        match = re.search(division_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 4: "The length of X is Z." -> extract Z
+        length_pattern = r'The length of [^.]* is ([^.]*)\.?$'
+        match = re.search(length_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 5: "The result is Z." -> extract Z
+        result_pattern = r'The result is ([^.]*)\.?$'
+        match = re.search(result_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 6: "The answer is Z." -> extract Z
+        answer_pattern = r'The answer is ([^.]*)\.?$'
+        match = re.search(answer_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 7: "X equals Z." -> extract Z
+        equals_pattern = r'[^.]* equals ([^.]*)\.?$'
+        match = re.search(equals_pattern, content, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 8: Look for numbers at the end of sentences
+        number_at_end_pattern = r'[^0-9]*([0-9]+\.?[0-9]*)\s*\.?\s*$'
+        match = re.search(number_at_end_pattern, content)
+        if match:
+            return match.group(1).strip()
+        
+        # Pattern 9: Look for quoted strings
+        quoted_pattern = r'"([^"]*)"'
+        matches = re.findall(quoted_pattern, content)
+        if matches:
+            return matches[-1].strip()
+        
+        return None
+    
+    def _enhance_task_prompt(self, task_prompt: str) -> str:
+        """Enhance the task prompt with clear output format instructions."""
+        enhanced_prompt = f"""You are a precise task execution agent. Your job is to complete the given task and provide ONLY the final result value.
+
+IMPORTANT OUTPUT FORMAT RULES:
+- Provide ONLY the final result value, nothing else
+- Do NOT include explanations, descriptions, or verbose text
+- Do NOT use phrases like "The result is", "The answer is", "The sum is", etc.
+- For mathematical operations, return just the number
+- For text operations, return just the text value
+- For lists, return just the list
+- Do NOT add periods, quotes, or other formatting
+
+Examples of CORRECT output format:
+- If the task asks for a sum, return: 9 (not "The sum is 9" or "The result is 9")
+- If the task asks for text, return: hello (not "The text is hello")
+- If the task asks for a list, return: [1, 2, 3] (not "The list is [1, 2, 3]")
+
+Task to complete: {task_prompt}
+
+Remember: Provide ONLY the final result value with no additional text or formatting."""
+        
+        return enhanced_prompt

@@ -2,15 +2,13 @@
 BENCHMARK PERFORMANCE REPORT
 ================================================================================
 
-LANGGRAPH PLATFORM
+AUTOGEN PLATFORM
 ----------------------------------------
-Run ID: run_000001_20250905_172507
-Total Tasks: 50
-Successful: 17
-Failed: 33
-Overall Success Rate: 34.0%
+Run ID: run_000001_20250907_160605
+Total Tasks: 1
+Successful: 1
+Failed: 0
+Overall Success Rate: 100.0%
 
 Performance by Task Complexity:
-  1: 8/20 (40.0%)
-  2: 7/20 (35.0%)
-  3: 2/10 (20.0%)
+  1: 1/1 (100.0%)
