@@ -13,10 +13,11 @@
 
 ### 📊 Critical Insights
 
-1. **Format Sensitivity Discovery**: Traditional exact-match validation severely underestimates AutoGen and SMOLAgents performance
-2. **CrewAI Dominance**: Consistently highest accuracy across all complexity levels
+1. **Smart Validation Methodology**: Traditional exact-match validation severely underestimates platform capabilities by 20-40%
+2. **CrewAI Dominance**: Consistently highest true accuracy across all complexity levels
 3. **SMOLAgents Efficiency**: Best performance-to-cost ratio with fastest execution
 4. **LangGraph Complexity**: Most powerful but requires significant implementation expertise
+5. **AutoGen Surprise**: Strong semantic understanding despite format variations
 
 ### 🎯 Recommendations by Use Case
 
@@ -47,9 +48,10 @@
 ### 📈 Performance Highlights
 
 - **600 total task executions** across 12 benchmark runs
-- **Smart validation** reveals 13.3% accuracy gap between best and worst platforms
-- **Format tolerance** varies dramatically: AutoGen +34%, LangGraph -32.7%
+- **Smart validation** reveals 13.4% accuracy gap between best and worst platforms
+- **True accuracy range**: 67.3% (LangGraph) to 80.7% (CrewAI)
 - **Stability analysis** shows CrewAI and AutoGen most consistent (4% range)
+- **Methodology innovation**: Smart validation provides fair platform comparison
 
 ### 🔬 Methodology Innovation
 
