@@ -1,0 +1,394 @@
+{
+  "crewai": [
+    {
+      "total_tasks": 50,
+      "error_rate": 0.02,
+      "success_rate": 0.98,
+      "exact_match_rate": 0.56,
+      "semantic_match_rate": 0.56,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.05,
+          "success_rate": 0.95,
+          "exact_match_rate": 0.6,
+          "semantic_match_rate": 0.6
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.6,
+          "semantic_match_rate": 0.6
+        }
+      },
+      "run_id": "run_000003_20250909_142747",
+      "platform": "crewai"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.02,
+      "success_rate": 0.98,
+      "exact_match_rate": 0.58,
+      "semantic_match_rate": 0.58,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.6,
+          "semantic_match_rate": 0.6
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.1,
+          "success_rate": 0.9,
+          "exact_match_rate": 0.7,
+          "semantic_match_rate": 0.7
+        }
+      },
+      "run_id": "run_000003_20250909_142152",
+      "platform": "crewai"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.02,
+      "success_rate": 0.98,
+      "exact_match_rate": 0.58,
+      "semantic_match_rate": 0.58,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.05,
+          "success_rate": 0.95,
+          "exact_match_rate": 0.6,
+          "semantic_match_rate": 0.6
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.7,
+          "semantic_match_rate": 0.7
+        }
+      },
+      "run_id": "run_000003_20250909_135954",
+      "platform": "crewai"
+    }
+  ],
+  "langgraph": [
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.4,
+      "semantic_match_rate": 0.68,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.35,
+          "semantic_match_rate": 0.75
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.65
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.6
+        }
+      },
+      "run_id": "run_000001_20250909_145400",
+      "platform": "langgraph"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.44,
+      "semantic_match_rate": 0.44,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.45,
+          "semantic_match_rate": 0.45
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        }
+      },
+      "run_id": "run_000001_20250909_145352",
+      "platform": "langgraph"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.42,
+      "semantic_match_rate": 0.42,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        }
+      },
+      "run_id": "run_000001_20250909_144425",
+      "platform": "langgraph"
+    }
+  ],
+  "autogen": [
+    {
+      "total_tasks": 50,
+      "error_rate": 0.04,
+      "success_rate": 0.96,
+      "exact_match_rate": 0.42,
+      "semantic_match_rate": 0.42,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.45,
+          "semantic_match_rate": 0.45
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.2,
+          "success_rate": 0.8,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        }
+      },
+      "run_id": "run_20250909_151037",
+      "platform": "autogen"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.02,
+      "success_rate": 0.98,
+      "exact_match_rate": 0.44,
+      "semantic_match_rate": 0.44,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.1,
+          "success_rate": 0.9,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        }
+      },
+      "run_id": "run_20250909_145420",
+      "platform": "autogen"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.02,
+      "success_rate": 0.98,
+      "exact_match_rate": 0.44,
+      "semantic_match_rate": 0.44,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.1,
+          "success_rate": 0.9,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        }
+      },
+      "run_id": "run_20250909_145411",
+      "platform": "autogen"
+    }
+  ],
+  "smolagents": [
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.48,
+      "semantic_match_rate": 0.48,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.6,
+          "semantic_match_rate": 0.6
+        }
+      },
+      "run_id": "run_20250909_151026",
+      "platform": "smolagents"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.46,
+      "semantic_match_rate": 0.46,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.45,
+          "semantic_match_rate": 0.45
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.4,
+          "semantic_match_rate": 0.4
+        }
+      },
+      "run_id": "run_20250909_151021",
+      "platform": "smolagents"
+    },
+    {
+      "total_tasks": 50,
+      "error_rate": 0.0,
+      "success_rate": 1.0,
+      "exact_match_rate": 0.5,
+      "semantic_match_rate": 0.5,
+      "complexity_breakdown": {
+        "K=1": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.45,
+          "semantic_match_rate": 0.45
+        },
+        "K=2": {
+          "total_tasks": 20,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.55,
+          "semantic_match_rate": 0.55
+        },
+        "K=3": {
+          "total_tasks": 10,
+          "error_rate": 0.0,
+          "success_rate": 1.0,
+          "exact_match_rate": 0.5,
+          "semantic_match_rate": 0.5
+        }
+      },
+      "run_id": "run_20250909_151018",
+      "platform": "smolagents"
+    }
+  ]
+}

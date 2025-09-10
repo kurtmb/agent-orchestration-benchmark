@@ -1,0 +1,124 @@
+task_id,platform,run_id,K_required,N_available,success,exact_match,numeric_tol_ok,final_output,expect,smart_success,smart_validation,validation_changed,confidence,reasoning,extracted_value,format_issues
+S01,smolagents,run_20250909_151018,1,53,1,1,0,delta,delta,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains the correct value 'delta' as expected."", ""extracted_value"": ""delta"", ""format_issues"": ""None""}",False,high,The actual output contains the correct value 'delta' as expected.,delta,None
+S02,smolagents,run_20250909_151018,1,53,1,1,0,JOHN DOE,JOHN DOE,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""JOHN DOE"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,JOHN DOE,None
+S03,smolagents,run_20250909_151018,1,53,1,1,0,spaced,spaced,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""spaced"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,spaced,None
+S04,smolagents,run_20250909_151018,1,53,1,1,0,123,123,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains the correct value as expected."", ""extracted_value"": ""123"", ""format_issues"": ""None""}",False,high,The actual output contains the correct value as expected.,123,None
+S05,smolagents,run_20250909_151018,1,53,0,0,0,ALPHA A5 has been updated to 'pre-me'.,pre-prefix_me,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains the correct value 'pre-me', which starts with 'pre-' as required by the task."", ""extracted_value"": ""pre-me"", ""format_issues"": ""None""}",True,high,"The actual output contains the correct value 'pre-me', which starts with 'pre-' as required by the task.",pre-me,None
+S06,smolagents,run_20250909_151018,1,53,0,0,0,"To ensure that ALPHA A6 ends with '-end', you can modify the current value. Since the current value is 'hello', you can replace it with 'hello-end'. 
+
+Here’s the final value for ALPHA A6: **'hello-end'**.",hello-end,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains the correct value 'hello-end' as the final value for ALPHA A6, fulfilling the task requirement."", ""extracted_value"": ""hello-end"", ""format_issues"": ""None""}",True,high,"The actual output contains the correct value 'hello-end' as the final value for ALPHA A6, fulfilling the task requirement.",hello-end,None
+S07,smolagents,run_20250909_151018,1,53,1,1,0,hello world,hello world,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""hello world"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,hello world,None
+S08,smolagents,run_20250909_151018,1,53,0,0,0,9,9,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""9"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,9,None
+S09,smolagents,run_20250909_151018,1,53,0,0,0,30,30,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""30"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,30,None
+S10,smolagents,run_20250909_151018,1,53,0,0,0,10.0,10,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output '10.0' contains the correct value '10', which is the expected result of the division."", ""extracted_value"": ""10"", ""format_issues"": ""The output is in decimal format, but this does not affect the correctness of the answer.""}",True,high,"The actual output '10.0' contains the correct value '10', which is the expected result of the division.",10,"The output is in decimal format, but this does not affect the correctness of the answer."
+S11,smolagents,run_20250909_151018,1,53,0,0,0,3,3,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""3"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,3,None
+S12,smolagents,run_20250909_151018,1,53,0,0,0,"[5, 2, 1]","[5, 2, 1]",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, preserving the first occurrences of unique values."", ""extracted_value"": ""[5, 2, 1]"", ""format_issues"": ""None""}",True,high,"The actual output matches the expected output exactly, preserving the first occurrences of unique values.","[5, 2, 1]",None
+S13,smolagents,run_20250909_151018,1,53,0,0,0,"[7, 8, 9, 10]","[7, 8, 9, 10]",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""[7, 8, 9, 10]"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,"[7, 8, 9, 10]",None
+S14,smolagents,run_20250909_151018,1,53,0,0,0,"The integer range from 0 to 5 (exclusive) is: 1, 2, 3, 4.","[1, 2, 3, 4]",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains the correct values (1, 2, 3, 4) as part of a verbose statement."", ""extracted_value"": ""[1, 2, 3, 4]"", ""format_issues"": ""The output is presented in a verbose format but contains no significant formatting issues.""}",True,high,"The actual output contains the correct values (1, 2, 3, 4) as part of a verbose statement.","[1, 2, 3, 4]",The output is presented in a verbose format but contains no significant formatting issues.
+S15,smolagents,run_20250909_151018,1,53,1,1,0,z-y-x,z-y-x,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""z-y-x"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,z-y-x,None
+S16,smolagents,run_20250909_151018,1,53,0,0,0,"The result of splitting DELTA D4 by '-' is: ['A', 'B', 'C'].","['A', 'B', 'C']",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The correct value ['A', 'B', 'C'] is present in the actual output, despite the verbose phrasing."", ""extracted_value"": ""['A', 'B', 'C']"", ""format_issues"": ""None""}",True,high,"The correct value ['A', 'B', 'C'] is present in the actual output, despite the verbose phrasing.","['A', 'B', 'C']",None
+S17,smolagents,run_20250909_151018,1,53,0,0,0,12345,12345,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""12345"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,12345,None
+S18,smolagents,run_20250909_151018,1,53,1,1,0,ZGF0YQ==,ZGF0YQ==,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""ZGF0YQ=="", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,ZGF0YQ==,None
+S19,smolagents,run_20250909_151018,1,53,1,1,0,3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7,3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected SHA-256 hash value for the string 'data'."", ""extracted_value"": ""3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7"", ""format_issues"": ""None""}",False,high,The actual output matches the expected SHA-256 hash value for the string 'data'.,3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7,None
+S20,smolagents,run_20250909_151018,1,53,1,1,0,123.46,123.46,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""123.46"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,123.46,None
+C01,smolagents,run_20250909_151018,2,53,0,0,0,5.0,5,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output '5.0' represents the same numerical value as the expected output '5', differing only in format."", ""extracted_value"": ""5.0"", ""format_issues"": ""The output is in decimal format instead of integer, but this does not affect correctness.""}",True,high,"The actual output '5.0' represents the same numerical value as the expected output '5', differing only in format.",5.0,"The output is in decimal format instead of integer, but this does not affect correctness."
+C02,smolagents,run_20250909_151018,2,53,1,1,0,>> John Doe-OK,>> John Doe-OK,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": "">> John Doe-OK"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,>> John Doe-OK,None
+C03,smolagents,run_20250909_151018,2,53,1,1,0,"1,3,4,5","1,3,4,5",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""1,3,4,5"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,"1,3,4,5",None
+C04,smolagents,run_20250909_151018,2,53,0,0,0,$42,$42.000,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output '$42' does not match the expected output '$42.000' as it lacks the required decimal formatting."", ""extracted_value"": ""$42"", ""format_issues"": ""Missing decimal places""}",False,high,The actual output '$42' does not match the expected output '$42.000' as it lacks the required decimal formatting.,$42,Missing decimal places
+C05,smolagents,run_20250909_151018,2,53,0,0,0,9,9,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""9"", ""format_issues"": ""None""}",True,high,The actual output matches the expected output exactly.,9,None
+C06,smolagents,run_20250909_151018,2,53,0,0,0,6,5,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output of 6 does not match the expected output of 5, which is the last element in the range [1,6)."", ""extracted_value"": null, ""format_issues"": null}",False,high,"The actual output of 6 does not match the expected output of 5, which is the last element in the range [1,6).",,
+C07,smolagents,run_20250909_151018,2,53,1,1,0,id:bar_baz,id:bar_baz,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the task was completed correctly."", ""extracted_value"": ""bar_baz"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the task was completed correctly.",bar_baz,None
+C08,smolagents,run_20250909_151018,2,53,0,0,0,"the quick brown fox, The Quick Brown Fox",The Quick Brown Fox,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The expected output 'The Quick Brown Fox' is present in the actual output, despite the additional text."", ""extracted_value"": ""The Quick Brown Fox"", ""format_issues"": ""None""}",True,high,"The expected output 'The Quick Brown Fox' is present in the actual output, despite the additional text.",The Quick Brown Fox,None
+C09,smolagents,run_20250909_151018,2,53,1,1,0,hello world,hello world,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""hello world"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,hello world,None
+C10,smolagents,run_20250909_151018,2,53,1,1,0,123,123,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""123"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,123,None
+C11,smolagents,run_20250909_151018,2,53,0,0,0,35,27,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output of 35 does not match the expected output of 27, indicating that the calculation is incorrect."", ""extracted_value"": null, ""format_issues"": ""None""}",False,high,"The actual output of 35 does not match the expected output of 27, indicating that the calculation is incorrect.",,None
+C12,smolagents,run_20250909_151018,2,53,1,1,0,1.570795,1.570795,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the calculation was performed correctly."", ""extracted_value"": ""1.570795"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the calculation was performed correctly.",1.570795,None
+C13,smolagents,run_20250909_151018,2,53,0,0,0,"To set the value of '/c' to 3 on IOTA I1 (pure) and then retrieve it, you would typically follow these steps:
+
+1. **Set the value**: Use a command or function to set '/c' to 3 on IOTA I1.
+2. **Get the value**: After setting the value, use a command or function to retrieve the value of '/c'.
+
+Since the current observation shows that the result is `{'a': 1, 'b': 2}`, it seems that '/c' has not been set yet. 
+
+Assuming you have the capability to set the value, you would execute the following:
+
+1. **Set '/c' to 3**:
+   - Command: `SET_IOTA(I1, '/c', 3)`
+
+2. **Get the value of '/c'**:
+   - Command: `GET_IOTA(I1, '/c')`
+
+After executing these commands, you should be able to retrieve the value of '/c', which should now be 3. 
+
+If you need further assistance with the specific commands or functions to use, please provide more context or the environment you are working in.",3,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output does not provide the expected value of 3 for '/c'. Instead, it indicates that '/c' has not been set yet, which contradicts the task requirement."", ""extracted_value"": null, ""format_issues"": ""N/A""}",False,high,"The actual output does not provide the expected value of 3 for '/c'. Instead, it indicates that '/c' has not been set yet, which contradicts the task requirement.",,N/A
+C14,smolagents,run_20250909_151018,2,53,1,1,0,"8,7,6","8,7,6",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""8,7,6"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,"8,7,6",None
+C15,smolagents,run_20250909_151018,2,53,0,0,0,"The shallow-merged result is {'x': 1, 'y': 9} and it is not equal to {'x': 1, 'y': 2}.",True,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output states that the shallow-merged result is not equal to the expected value, which indicates that the output is incorrect."", ""extracted_value"": ""{'x': 1, 'y': 9}"", ""format_issues"": ""None""}",False,high,"The actual output states that the shallow-merged result is not equal to the expected value, which indicates that the output is incorrect.","{'x': 1, 'y': 9}",None
+C16,smolagents,run_20250909_151018,2,53,1,1,0,ID-12345,ID-12345,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the task was completed correctly."", ""extracted_value"": ""12345"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the task was completed correctly.",12345,None
+C17,smolagents,run_20250909_151018,2,53,1,1,0,foo-ok,foo-ok,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""foo-ok"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,foo-ok,None
+C18,smolagents,run_20250909_151018,2,53,1,1,0,-5.00,-5.00,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating it is correct."", ""extracted_value"": ""-5.00"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating it is correct.",-5.00,None
+C19,smolagents,run_20250909_151018,2,53,0,0,0,10,10,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output correctly states the length of the range [0,10) as 10."", ""extracted_value"": ""10"", ""format_issues"": ""None""}",True,high,"The actual output correctly states the length of the range [0,10) as 10.",10,None
+C20,smolagents,run_20250909_151018,2,53,1,1,0,Case Test!,Case Test!,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""Case Test!"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,Case Test!,None
+V01,smolagents,run_20250909_151018,3,53,1,1,0,HIGH-John Doe,HIGH-John Doe,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the task was completed correctly."", ""extracted_value"": ""HIGH-John Doe"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the task was completed correctly.",HIGH-John Doe,None
+V02,smolagents,run_20250909_151018,3,53,1,1,0,ORD-132-X,ORD-132-X,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the task was completed correctly."", ""extracted_value"": ""132"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the task was completed correctly.",132,None
+V03,smolagents,run_20250909_151018,3,53,0,0,0,"To complete the task, we will follow these steps:
+
+1. Set the `/meta/label` of SIGMA S1 to the title-case of ALPHA A2, which is ""John Doe"".
+2. Merge SIGMA S1 with SIGMA S2, overriding the values in S1 with those from S2.
+3. Pick the keys `['y', 'meta']` from the merged result.
+4. Stringify the final result.
+
+Given the observations:
+- SIGMA S1: `{'x': 1, 'y': 2}`
+- SIGMA S2: `{'y': 9}`
+- ALPHA A2: `'john doe'` (title-case: `'John Doe'`)
+
+### Step 1: Update SIGMA S1
+```json
+{
+  ""meta"": {
+    ""label"": ""John Doe""
+  },
+  ""x"": 1,
+  ""y"": 2
+}
+```
+
+### Step 2: Merge with SIGMA S2
+After merging (overriding values from S2):
+```json
+{
+  ""meta"": {
+    ""label"": ""John Doe""
+  },
+  ""y"": 9
+}
+```
+
+### Step 3: Pick keys `['y', 'meta']`
+Resulting in:
+```json
+{
+  ""y"": 9,
+  ""meta"": {
+    ""label"": ""John Doe""
+  }
+}
+```
+
+### Step 4: Stringify the result
+The final stringified result is:
+```json
+'{""y"":9,""meta"":{""label"":""John Doe""}}'
+```
+
+Thus, the answer to the user task is:
+```json
+'{""y"":9,""meta"":{""label"":""John Doe""}}'
+```","{""y"": 9, ""meta"": {""label"": ""John Doe""}}",False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output is a string representation of the JSON, which is not the expected format. The expected output is a JSON object, not a string."", ""extracted_value"": ""{\""y\"":9,\""meta\"":{\""label\"":\""John Doe\""}}"", ""format_issues"": ""The output is stringified, which is a formatting issue.""}",False,high,"The actual output is a string representation of the JSON, which is not the expected format. The expected output is a JSON object, not a string.","{""y"":9,""meta"":{""label"":""John Doe""}}","The output is stringified, which is a formatting issue."
+V04,smolagents,run_20250909_151018,3,53,0,0,0,9,12,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output of 9 does not match the expected output of 12, indicating that the calculation or the values used were incorrect."", ""extracted_value"": ""9"", ""format_issues"": ""None""}",False,high,"The actual output of 9 does not match the expected output of 12, indicating that the calculation or the values used were incorrect.",9,None
+V05,smolagents,run_20250909_151018,3,53,1,1,0,"Hello, The Quick Brown Fox!","Hello, The Quick Brown Fox!",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""The Quick Brown Fox"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,The Quick Brown Fox,None
+V06,smolagents,run_20250909_151018,3,53,1,1,0,b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9,b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly, indicating that the task was completed correctly."", ""extracted_value"": ""b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"", ""format_issues"": ""None""}",False,high,"The actual output matches the expected output exactly, indicating that the task was completed correctly.",b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9,None
+V07,smolagents,run_20250909_151018,3,53,1,1,0,5.8599,5.8599,True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output matches the expected output exactly."", ""extracted_value"": ""5.8599"", ""format_issues"": ""None""}",False,high,The actual output matches the expected output exactly.,5.8599,None
+V08,smolagents,run_20250909_151018,3,53,0,0,0,2,1,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output of 2 does not match the expected output of 1, indicating that the task was not completed correctly."", ""extracted_value"": ""2"", ""format_issues"": ""None""}",False,high,"The actual output of 2 does not match the expected output of 1, indicating that the task was not completed correctly.",2,None
+V09,smolagents,run_20250909_151018,3,53,0,0,0,v:repeat:v:repeat-ok,v:repeat:repeat:ok,False,"{""is_correct"": false, ""confidence"": ""high"", ""reasoning"": ""The actual output does not meet the requirement of ending with '-ok' without duplication, as it ends with 'v:repeat-ok'."", ""extracted_value"": ""v:repeat:repeat:ok"", ""format_issues"": ""The output has an incorrect structure with a duplicate prefix 'v:'""}",False,high,"The actual output does not meet the requirement of ending with '-ok' without duplication, as it ends with 'v:repeat-ok'.",v:repeat:repeat:ok,The output has an incorrect structure with a duplicate prefix 'v:'
+V10,smolagents,run_20250909_151018,3,53,0,0,0,"{""base"":true,""info"":{""code"":""123""},""x"":1,""y"":2}","{""base"": true, ""x"": 1, ""y"": 2, ""info"": {""code"": ""123""}}",True,"{""is_correct"": true, ""confidence"": ""high"", ""reasoning"": ""The actual output contains all the required fields and values, including the correct 'code' value, even though the order of keys is different."", ""extracted_value"": ""{\""base\"":true,\""info\"":{\""code\"":\""123\""},\""x\"":1,\""y\"":2}"", ""format_issues"": ""The order of keys is different, but this does not affect correctness.""}",True,high,"The actual output contains all the required fields and values, including the correct 'code' value, even though the order of keys is different.","{""base"":true,""info"":{""code"":""123""},""x"":1,""y"":2}","The order of keys is different, but this does not affect correctness."

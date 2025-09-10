@@ -26,8 +26,8 @@ def build_catalog(N_available: int) -> Dict[str, Callable]:
     if N_available <= 0:
         raise ValueError("N_available must be positive")
     
-    if N_available > 50:
-        raise ValueError("N_available cannot exceed 50 (total available tools)")
+    if N_available > 70:
+        raise ValueError("N_available cannot exceed 70 (total available tools)")
     
     # Combine all available tools
     all_tools = {**VARIABLE_TOOLS, **FUNCTION_TOOLS}
@@ -65,8 +65,8 @@ def get_catalog_info(catalog: Dict[str, Callable]) -> Dict[str, Any]:
 
 
 def list_available_catalog_sizes() -> List[int]:
-    """List all available catalog sizes (1 to 50)"""
-    return list(range(1, 51))
+    """List all available catalog sizes (1 to 70)"""
+    return list(range(1, 71))
 
 
 def get_tool_by_name(catalog: Dict[str, Callable], name: str) -> Callable:
@@ -149,5 +149,5 @@ def create_medium_catalog() -> Dict[str, Callable]:
 
 
 def create_full_catalog() -> Dict[str, Callable]:
-    """Create a full catalog with all 50 tools."""
-    return build_catalog(50)
+    """Create a full catalog with all 53 tools."""
+    return build_catalog(53)

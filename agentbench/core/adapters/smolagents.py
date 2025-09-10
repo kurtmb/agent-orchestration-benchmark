@@ -238,6 +238,14 @@ class SMOLAgentsToolWrapper(Tool):
                     "description": "JSON path to the value"
                 }
             }
+        elif name in ["HASH_SHA256", "BASE64_ENCODE", "BASE64_DECODE"]:
+            # Hash and encoding tools
+            self.inputs = {
+                "text": {
+                    "type": "string",
+                    "description": "The text to process"
+                }
+            }
         else:
             # Default schema for other tools
             self.inputs = {

@@ -36,7 +36,7 @@ def main():
     try:
         # Load tools and tasks
         print("📚 Loading tool catalog and test tasks...")
-        tools = create_full_catalog()  # Use all 50 tools
+        tools = create_full_catalog()  # Use all 53 tools
         tasks = load_tasks()
         
         print(f"✅ Loaded {len(tools)} tools and {len(tasks)} test tasks")
@@ -65,14 +65,14 @@ def main():
         
         # Run the benchmark
         print("\n🎯 Running LangGraph benchmark...")
-        print("This will test all 50 tools across K=1, K=2, and K=3 complexity levels")
+        print("This will test all 53 tools across K=1, K=2, and K=3 complexity levels")
         print("Expected duration: 10-15 minutes")
         print("-" * 50)
         
         # Run the full test matrix
         results = runner.run_platform_tests(
             platform_name="langgraph",
-            catalog_size=50,
+            catalog_size=53,
             task_complexities=["K=1", "K=2", "K=3"]
         )
         

@@ -1,0 +1,64 @@
+# Agent Orchestration Benchmark - Default Configuration
+# Version: 2.0
+# Date: September 2025
+
+benchmark:
+  total_tasks: 50
+  timeout_seconds: 300
+  retry_attempts: 3
+  retry_delay: 2
+  catalog_size: 53
+
+llm:
+  model: "gpt-4o-mini"
+  temperature: 0.0
+  max_tokens: 4096
+  top_p: 0
+
+validation:
+  method: "chatgpt"
+  confidence_threshold: 0.8
+  fallback_to_exact: true
+
+output:
+  save_transcripts: true
+  save_analysis: true
+  format: "csv"
+  include_metadata: true
+
+platforms:
+  crewai:
+    enabled: true
+    max_iterations: 10
+    verbose: true
+    memory: true
+  
+  smolagents:
+    enabled: true
+    max_steps: 20
+    timeout: 300
+  
+  langgraph:
+    enabled: true
+    max_iterations: 15
+    debug: false
+  
+  autogen:
+    enabled: true
+    max_turns: 10
+    human_input_mode: "NEVER"
+
+tools:
+  variable_tools: 20
+  math_tools: 6
+  string_tools: 4
+  list_tools: 4
+  object_tools: 6
+  logic_tools: 10
+  encoding_tools: 3
+
+analysis:
+  generate_reports: true
+  include_confidence_intervals: true
+  statistical_tests: true
+  complexity_breakdown: true

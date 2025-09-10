@@ -1,0 +1,339 @@
+task_id,expected,actual,original_success,smart_validation_success,confidence,reasoning
+S01,delta,delta,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both being 'delta'. There are no discrepancies in value or format.""
+}
+```"
+S02,JOHN DOE,JOHN DOE,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in content and format.""
+}
+```"
+S03,spaced,spaced,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, indicating that the core result is correct and the format is acceptable.""
+}
+```"
+S04,123,123,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output '123' matches the expected output '123' exactly, indicating that the core result is correct and the format is acceptable.""
+}
+```"
+S05,pre-prefix_me,pre-_me,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output 'pre-_me' contains an additional underscore that is not present in the expected output 'pre-prefix_me'. This minor formatting difference affects the correctness of the output.""
+}
+```"
+S06,hello-end,hello-end,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both being 'hello-end'. There are no discrepancies in value or format.""
+}
+```"
+S07,hello world,hello world,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, with no differences in content or format.""
+}
+```"
+S08,9,The sum of BETA B1 and BETA B8 is 9.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '9' is correct, and while the actual output is more verbose, it conveys the same information. The format is acceptable.""
+}
+```"
+S09,30,The product of BETA B6 and BETA B7 is 30.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '30' is correct, and while the actual output is more verbose, it still conveys the correct value in an acceptable format.""
+}
+```"
+S10,10,The result of dividing BETA B5 by BETA B7 is 10.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '10' is correct, and while the format is more verbose than expected, it still conveys the correct information clearly.""
+}
+```"
+S11,3,The length of EPSILON E1 is 3.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result '3' is correctly stated in the actual output, even though it is presented in a more verbose format. The additional context does not affect the correctness of the value.""
+}
+```"
+S12,"[5, 2, 1]","The unique values of EPSILON E2, preserving first occurrences, are [5, 2, 1].",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of unique values [5, 2, 1] is correct, and while the format is more verbose than expected, it still conveys the same information accurately.""
+}
+```"
+S13,"[7, 8, 9, 10]","The sorted values of EPSILON E3 in ascending order are [7, 8, 9, 10].",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of the sorted values [7, 8, 9, 10] is correct, and while the actual output is more verbose, it still conveys the same information in an acceptable format.""
+}
+```"
+S14,"[0, 1, 2, 3, 4]","The integer range from 0 to 5 (exclusive) is [1, 2, 3, 4].",False,False,high,"The actual output lists the integers from 1 to 4, which is incorrect as the expected output should include the range from 0 to 4, resulting in [0, 1, 2, 3, 4]. The core result is not correct, and while the format is verbose, it does not match the expected output."
+S15,z-y-x,x-y-z,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output 'x-y-z' does not match the expected output 'z-y-x', indicating that the core result is incorrect.""
+}
+```"
+S16,"['A', 'B', 'C']",C,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output 'C' does not match the expected output 'A', 'B', 'C'. The core result is incorrect as it does not include all the expected elements.""
+}
+```"
+S17,12345,12345,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+S18,ZGF0YQ==,ZGF0YQ==,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, indicating that the core result is correct and the format is acceptable.""
+}
+```"
+S19,3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7,ba7816bf8f01cfea414140de5dae22f1,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output does not match the expected output, indicating that the core result/value is incorrect. The format of the actual output is acceptable, but since the value itself is wrong, the task is not completed correctly.""
+}
+```"
+S20,123.46,It seems there is a consistent error while trying to round the value. The formatted value of LAMBDA L1 with 2 decimal places would be 123.46.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '123.46' is correctly identified in the actual output, despite the verbose explanation. The format is acceptable as it conveys the correct value clearly.""
+}
+```"
+C01,5,"The hypotenuse computed from GAMMA G1 (x=3, y=4) is 5.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '5' is correct as it accurately represents the hypotenuse calculated from the given values (3 and 4). The format, while verbose, still conveys the correct information and is acceptable.""
+}
+```"
+C02,>> John Doe-OK,>> John Doe-OK,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in content and format.""
+}
+```"
+C03,"1,3,4,5","1,3,4,5",True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C04,$42.000,$42.000,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C05,9,"The merged result of SIGMA S1 and S2, with S2 overriding, gives us the value {'x': 1, 'y': 9}. The value for '/y' is 9.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output provides the correct value of 'y' as 9, which matches the expected output. Although the format is more verbose than simply stating '9', it still conveys the correct information clearly.""
+}
+```"
+C06,5,"The last element of the range [1, 6) is 5.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output correctly identifies the last element of the range [1, 6) as 5, which matches the expected output. Although the format is more verbose, it still conveys the correct value.""
+}
+```"
+C07,id:bar_baz,id:bar_baz,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C08,The Quick Brown Fox,The Quick Brown Fox,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, with no differences in content or format.""
+}
+```"
+C09,hello world,hello world,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, with no differences in content or format.""
+}
+```"
+C10,123,123,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output '123' matches the expected output '123' exactly, indicating that the core result is correct and the format is acceptable.""
+}
+```"
+C11,27,The result of the expression \((BETA B1 + BETA B8) * BETA B6\) is 27.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output provides the correct core result of 27, even though it is presented in a more verbose format. The additional context does not affect the correctness of the value.""
+}
+```"
+C12,1.570795,"It seems there is a repeated issue with rounding the result to six decimal places. The value of \(\frac{PI P1}{XI X1}\) is approximately 1.570795.
+
+In 6 decimal places, it would be represented as 1.570795.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of 1.570795 is correct, and while the output is verbose, it still conveys the correct value in the expected format. The minor additional text does not affect the correctness of the result.""
+}
+```"
+C13,3,"It seems there is a misunderstanding in the process of updating the IOTA value. The new value should be set to include `/c` key with a value of 3. 
+
+Currently, without setting it in the JSON object, the value of `/c` is not present. Therefore, the current object would look like this: {'a': 1, 'b': 2, '/c': 3}. However, I couldn't update it accordingly because the IOTA function doesn't allow direct modifications.
+
+The value of `/c` would be 3 if we could set it correctly.",False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output does not provide the expected value '3' directly as required. Instead, it discusses the process and reasoning behind the value, which does not fulfill the task of simply outputting '3'.""
+}
+```"
+C14,"8,7,6","8,7,6",True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C15,True,"The shallow merge of SIGMA S1 and S2 results in {'x': 1, 'y': 9}. However, when compared for equality with {x:1, y:9}, the result is **False**.",False,True,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The expected output is 'True', indicating that the shallow merge of SIGMA S1 and S2 should be equal to {x:1, y:9}. However, the actual output states that the result is 'False', which contradicts the expected output. Therefore, the core result is incorrect.""
+}
+```"
+C16,ID-12345,ID-12345,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C17,foo-ok,foo-ok,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in value and format.""
+}
+```"
+C18,-5.00,"The value of LAMBDA L2 is -7.89, and clamping it to the range [-5, 5] results in -5. Formatting it to 2 decimals gives -5.00.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of -5.00 is correct as it matches the expected output. The format, while verbose, is acceptable and provides additional context. There are no minor formatting differences that affect correctness.""
+}
+```"
+C19,10,"The length of the range [0, 10) is 10.",False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output provides a correct explanation of the range's length but does not match the expected output of '10' in the required format. The expected output is a simple numeric value, while the actual output is a verbose statement.""
+}
+```"
+C20,Case Test!,Case Test!,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, with no differences in content or format.""
+}
+```"
+V01,HIGH-John Doe,HIGH-John Doe,True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, both in core result and format.""
+}
+```"
+V02,ORD-132-X,123,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output '123' does not match the expected output 'ORD-132-X' in both value and format. The expected output includes a specific prefix and structure that is entirely absent in the actual output.""
+}
+```"
+V03,"{""y"": 9, ""meta"": {""label"": ""John Doe""}}","{'y': 9, 'meta': {'label': 'John Doe'}}",False,False,high,"The core result/value is correct, but the format is not acceptable due to the use of single quotes instead of double quotes, which is required for valid JSON."
+V04,12,"The sorted value from EPSILON E4 at index 1 is 4. When multiplied by BETA B6 (which is 3), the result is 12. Formatting this with 0 decimals gives 12.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of '12' is correctly derived and matches the expected output. The format, while verbose, is acceptable as it provides context and explanation for the result. There are no minor formatting differences that affect correctness.""
+}
+```"
+V05,"Hello, The Quick Brown Fox!","Hello, The Quick Brown Fox!",True,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output matches the expected output exactly, with no differences in content or formatting.""
+}
+```"
+V06,b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9,5eb63bbbe01eeed093cb22bb8f5acdc3,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output does not match the expected output, indicating that the core result/value is incorrect.""
+}
+```"
+V07,5.8599,"The sum of PI P1 and PI P2 is 5.85987. When formatting to 4 decimal places, the result is 5.8599.",False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The core result of 5.85987 is accurate, and when formatted to 4 decimal places, it correctly rounds to 5.8599. The output is verbose but provides the correct value in the expected format.""
+}
+```"
+V08,1,The item at index 1 from the unique array derived from IOTA I2 is 1.,False,True,high,"```json
+{
+  ""correct"": true,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output correctly identifies the value at index 1 as '1', which matches the expected output. Although the format is more verbose than the expected output, it still conveys the correct information.""
+}
+```"
+V09,v:repeat:repeat-ok,v:repeat:repeat,False,False,high,"```json
+{
+  ""correct"": false,
+  ""confidence"": ""high"",
+  ""reasoning"": ""The actual output 'v:repeat:repeat' does not match the expected output 'v:repeat:repeat-ok'. The core result/value is incorrect as it lacks the '-ok' suffix, which indicates a successful completion. The format is not acceptable since it does not meet the specified expected output.""
+}
+```"
+V10,"{""base"": true, ""x"": 1, ""y"": 2, ""info"": {""code"": ""123""}}",123,False,False,high,"The actual output '123' does not match the expected output format, which is a JSON object containing specific keys and values. The expected output includes a structure with 'base', 'x', 'y', and 'info', while the actual output is just a string."

@@ -1,11 +1,11 @@
-# Agent Tools Catalog v1 (50 deterministic tools)
+# Agent Tools Catalog v1 (53 deterministic tools)
 
-This catalog defines **50 mock tools** for orchestration tests. All tools are **pure, deterministic, and side‑effect free**. Inputs are **strictly JSON‑Schema validated** and must not include extraneous fields (`additionalProperties: false`). Outputs are fixed and reproducible. No external I/O.
+This catalog defines **53 mock tools** for orchestration tests. All tools are **pure, deterministic, and side‑effect free**. Inputs are **strictly JSON‑Schema validated** and must not include extraneous fields (`additionalProperties: false`). Outputs are fixed and reproducible. No external I/O.
 
 > Families:
 >
 > * **Variable tools (20):** key→value lookups from fixtures (e.g., `fixtures/values.json`).
-> * **Function tools (30):** math, string, list, object, and regex utilities for multi‑step composition.
+> * **Function tools (33):** math, string, list, object, and regex utilities for multi‑step composition.
 
 For each tool: name, description, **args_schema**, **returns**, and an **example**.
 

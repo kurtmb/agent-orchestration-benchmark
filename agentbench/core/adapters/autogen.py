@@ -195,6 +195,16 @@ class AutoGenToolWrapper:
                         return str(result)
                     except Exception as e:
                         return f"Error executing {self.name}: {str(e)}"
+        elif self.name in ["TO_STRING", "PARSE_INT", "HASH_SHA256", "BASE64_ENCODE", "BASE64_DECODE"]:
+            # Encoding & misc tools
+            def wrapped_tool(text: str) -> str:
+                """Wrapper for benchmark encoding/misc tool."""
+                try:
+                    self.call_count += 1
+                    result = self._tool_func({"text": text})
+                    return str(result)
+                except Exception as e:
+                    return f"Error executing {self.name}: {str(e)}"
         else:
             # Fallback for any remaining tools - use a simple input parameter
             def wrapped_tool(input_data: str = "") -> str:

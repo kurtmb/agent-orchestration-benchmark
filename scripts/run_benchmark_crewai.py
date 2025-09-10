@@ -2,7 +2,7 @@
 """
 Full Agent Benchmark Runner - No Subsetting Issues
 
-This script runs the full benchmark with ALL tools (catalog size 50)
+This script runs the full benchmark with ALL tools (catalog size 53)
 to avoid the artificial failures caused by limited tool catalogs.
 """
 
@@ -79,16 +79,16 @@ def run_full_benchmark():
         print(f"⚠️  CrewAI adapter registration failed: {e}")
         print("   Running with mock adapter only")
     
-    # Run full matrix with catalog size 50 only
+    # Run full matrix with catalog size 53 only
     print("\n🎯 Running full benchmark matrix...")
-    print("   Catalog size: 50 (ALL tools)")
+    print("   Catalog size: 53 (ALL tools)")
     print("   Task complexities: K=1, K=2, K=3")
     print("   Platforms: All registered")
     
     # Create configuration for full test
     config = {
         "platforms": list(runner.adapters.keys()),
-        "catalog_sizes": [50],  # Only full catalog
+        "catalog_sizes": [53],  # Only full catalog
         "task_complexities": ["K=1", "K=2", "K=3"],
         "max_steps": 20,
         "timeout_seconds": 300

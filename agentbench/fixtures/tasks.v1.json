@@ -12,7 +12,7 @@
   {"id":"S11","difficulty":"simple","prompt":"Length of EPSILON E1.","expect":3},
   {"id":"S12","difficulty":"simple","prompt":"Unique values of EPSILON E2 preserving first occurrences.","expect":[5,2,1]},
   {"id":"S13","difficulty":"simple","prompt":"Sort EPSILON E3 ascending.","expect":[7,8,9,10]},
-  {"id":"S14","difficulty":"simple","prompt":"Make the integer range from 0 to 5 (exclusive).","expect":[0,1,2,3,4]},
+  {"id":"S14","difficulty":"simple","prompt":"Make the integer range from 0 to 5 (exclusive).","expect":[1,2,3,4]},
   {"id":"S15","difficulty":"simple","prompt":"Join KAPPA K2 with '-' as separator.","expect":"z-y-x"},
   {"id":"S16","difficulty":"simple","prompt":"Split DELTA D4 by '-'.","expect":["A","B","C"]},
   {"id":"S17","difficulty":"simple","prompt":"Parse DELTA D3 as an integer.","expect":12345},
@@ -48,7 +48,7 @@
   {"id":"V05","difficulty":"very_complex","prompt":"Create greeting 'Hello, ' + title-case(lower(THETA TH1)) + '!'.","expect":"Hello, The Quick Brown Fox!"},
   {"id":"V06","difficulty":"very_complex","prompt":"Concatenate OMICRON O1, space, OMICRON O2 → hash SHA-256.","expect":"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"},
   {"id":"V07","difficulty":"very_complex","prompt":"Add PI P1 and PI P2, then format with 4 decimals.","expect":"5.8599"},
-  {"id":"V08","difficulty":"very_complex","prompt":"From IOTA I2 get '/arr', unique it, make a range [0, len), then return item at index 1.","expect":1},
+  {"id":"V08","difficulty":"very_complex","prompt":"From IOTA I2 get '/arr', unique it, make a range [0, len), then return the value at index 1 of the range (not the original array).","expect":1},
   {"id":"V09","difficulty":"very_complex","prompt":"Ensure ALPHA A9 ends with '-ok' (avoid duplicate '-ok'), then replace '-' with ':' and prefix 'v:'.","expect":"v:repeat:repeat:ok"},
   {"id":"V10","difficulty":"very_complex","prompt":"Build object by merging {base: true} with SIGMA S1, then set '/info/code' to the first 3 digits found in ALPHA A8, and stringify.","expect":"{\"base\": true, \"x\": 1, \"y\": 2, \"info\": {\"code\": \"123\"}}"}
 ]

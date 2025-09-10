@@ -1,6 +1,195 @@
 {
   "runs": [
     {
+      "run_id": "run_000001_20250909_145400",
+      "start_time": "2025-09-09T14:54:00.942328",
+      "end_time": "2025-09-09T14:58:27.318075",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250909_145400.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250909_145400.json"
+    },
+    {
+      "run_id": "run_000001_20250909_145352",
+      "start_time": "2025-09-09T14:53:52.761541",
+      "end_time": "2025-09-09T14:58:01.320720",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250909_145352.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250909_145352.json"
+    },
+    {
+      "run_id": "run_000001_20250909_144425",
+      "start_time": "2025-09-09T14:44:25.281164",
+      "end_time": "2025-09-09T14:48:34.891033",
+      "status": "completed",
+      "platforms": [
+        "langgraph"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000001_20250909_144425.csv",
+      "metadata_file": "runs/run_metadata_run_000001_20250909_144425.json"
+    },
+    {
+      "run_id": "run_000003_20250909_142747",
+      "start_time": "2025-09-09T14:27:47.371494",
+      "end_time": "2025-09-09T14:36:21.175160",
+      "status": "completed",
+      "platforms": [
+        "crewai"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 0.98,
+      "results_file": "runs/benchmark_results_run_000003_20250909_142747.csv",
+      "metadata_file": "runs/run_metadata_run_000003_20250909_142747.json"
+    },
+    {
+      "run_id": "run_000002_20250909_142747",
+      "start_time": "2025-09-09T14:27:47.271720",
+      "end_time": "2025-09-09T14:27:47.337518",
+      "status": "completed",
+      "platforms": [
+        "mock"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000002_20250909_142747.csv",
+      "metadata_file": "runs/run_metadata_run_000002_20250909_142747.json"
+    },
+    {
+      "run_id": "run_000003_20250909_142152",
+      "start_time": "2025-09-09T14:21:52.589823",
+      "end_time": "2025-09-09T14:27:24.037159",
+      "status": "completed",
+      "platforms": [
+        "crewai"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000003_20250909_142152.csv",
+      "metadata_file": "runs/run_metadata_run_000003_20250909_142152.json"
+    },
+    {
+      "run_id": "run_000002_20250909_142152",
+      "start_time": "2025-09-09T14:21:52.502071",
+      "end_time": "2025-09-09T14:21:52.564861",
+      "status": "completed",
+      "platforms": [
+        "mock"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000002_20250909_142152.csv",
+      "metadata_file": "runs/run_metadata_run_000002_20250909_142152.json"
+    },
+    {
+      "run_id": "run_000003_20250909_135954",
+      "start_time": "2025-09-09T13:59:54.259583",
+      "end_time": "2025-09-09T14:08:59.751316",
+      "status": "completed",
+      "platforms": [
+        "crewai"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 0.98,
+      "results_file": "runs/benchmark_results_run_000003_20250909_135954.csv",
+      "metadata_file": "runs/run_metadata_run_000003_20250909_135954.json"
+    },
+    {
+      "run_id": "run_000002_20250909_135954",
+      "start_time": "2025-09-09T13:59:54.177199",
+      "end_time": "2025-09-09T13:59:54.236636",
+      "status": "completed",
+      "platforms": [
+        "mock"
+      ],
+      "catalog_sizes": [
+        53
+      ],
+      "task_complexities": [
+        "K=1",
+        "K=2",
+        "K=3"
+      ],
+      "total_tasks": 50,
+      "success_rate": 1.0,
+      "results_file": "runs/benchmark_results_run_000002_20250909_135954.csv",
+      "metadata_file": "runs/run_metadata_run_000002_20250909_135954.json"
+    },
+    {
       "run_id": "run_000001_20250908_123901",
       "start_time": "2025-09-08T12:39:01.721695",
       "end_time": "2025-09-08T12:44:23.257316",

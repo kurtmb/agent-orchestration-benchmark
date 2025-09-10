@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-AutoGen Benchmark Runner
-
-This script runs the full benchmark suite using the AutoGen adapter
-to evaluate its performance against the standardized test suite.
+Run full benchmark test matrix for SMOLAgents adapter.
+This replicates the same testing that was done for CrewAI.
 """
 
 import os
@@ -16,15 +14,14 @@ from datetime import datetime
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from agentbench.core.adapters.autogen import AutoGenAdapter
+from agentbench.core.adapters.smolagents import SMOLAgentsAdapter
 from agentbench.tools.registry import create_full_catalog
 from agentbench.fixtures.tasks import load_tasks, get_tasks_by_complexity
 from agentbench.eval.oracle import validate_task_result
 
-
-def run_autogen_benchmark():
-    """Run the full benchmark test matrix for AutoGen."""
-    print("🚀 Starting AutoGen Benchmark Test Matrix")
+def run_smolagents_benchmark():
+    """Run the full benchmark test matrix for SMOLAgents."""
+    print("🚀 Starting SMOLAgents Benchmark Test Matrix")
     print("=" * 60)
     
     # Check OpenAI API key
@@ -34,9 +31,9 @@ def run_autogen_benchmark():
     
     try:
         # Create adapter
-        print("📋 Creating AutoGen adapter...")
-        adapter = AutoGenAdapter()
-        print("✅ AutoGen adapter created successfully")
+        print("📋 Creating SMOLAgents adapter...")
+        adapter = SMOLAgentsAdapter()
+        print("✅ SMOLAgents adapter created successfully")
         
         # Get tools
         print("🔧 Loading tools...")
@@ -61,7 +58,7 @@ def run_autogen_benchmark():
         csv_file = results_dir / f"benchmark_results_{run_id}.csv"
         print(f"📊 Results will be saved to: {csv_file}")
         
-        # CSV headers (matching other platforms)
+        # CSV headers (matching CrewAI format)
         csv_headers = [
             'run_id', 'platform', 'seed', 'temperature', 'top_p', 'N_available', 'K_required',
             'task_id', 'max_steps', 'timeout_s', 'success', 'final_output', 'expect', 
@@ -123,14 +120,14 @@ def run_autogen_benchmark():
                             except:
                                 retry_attempts = 0
                         
-                        # Write to CSV (matching other platforms)
+                        # Write to CSV (matching CrewAI format)
                         csv_row = {
                             'run_id': run_id,
-                            'platform': 'autogen',
+                            'platform': 'smolagents',
                             'seed': 'seed_0',
                             'temperature': 0.0,
                             'top_p': 0,
-                            'N_available': 50,
+                            'N_available': 53,
                             'K_required': k_required,
                             'task_id': task['id'],
                             'max_steps': 20,
@@ -143,18 +140,18 @@ def run_autogen_benchmark():
                             'steps_used': result.steps_used or 0,
                             'tools_called': len(result.tools_called) if result.tools_called else 0,
                             'correct_tool_calls': result.correct_tool_calls or 0,
-                            'distractor_calls': 0,  # Not tracked in AutoGen yet
-                            'arg_validation_failures': 0,  # Not tracked in AutoGen yet
+                            'distractor_calls': 0,  # Not tracked in SMOLAgents yet
+                            'arg_validation_failures': 0,  # Not tracked in SMOLAgents yet
                             'start_ts': result.start_time.isoformat() if result.start_time else '',
                             'end_ts': result.end_time.isoformat() if result.end_time else '',
                             'wall_ms': result.wall_time_ms or 0,
-                            'prompt_tokens': result.prompt_tokens or 0,
-                            'completion_tokens': result.completion_tokens or 0,
-                            'tool_tokens': result.tool_tokens or 0,
-                            'usd_cost': result.usd_cost or 0,
-                            'timeout': 1 if result.timeout else 0,
-                            'nontermination': 1 if result.nontermination else 0,
-                            'schema_error': 1 if result.schema_error else 0,
+                            'prompt_tokens': 0,  # Not tracked in SMOLAgents yet
+                            'completion_tokens': 0,  # Not tracked in SMOLAgents yet
+                            'tool_tokens': 0,  # Not tracked in SMOLAgents yet
+                            'usd_cost': 0,  # Not tracked in SMOLAgents yet
+                            'timeout': 0,  # Will implement timeout detection
+                            'nontermination': 0,  # Will implement nontermination detection
+                            'schema_error': 0,  # Will implement schema error detection
                             'other_error': result.other_error or '',
                             'retry_attempts': retry_attempts,
                             'error_type': 'none' if is_success else 'validation_failed',
@@ -173,14 +170,14 @@ def run_autogen_benchmark():
                         
                     except Exception as e:
                         print("❌ ERROR")
-                        # Write error to CSV (matching other platforms)
+                        # Write error to CSV (matching CrewAI format)
                         csv_row = {
                             'run_id': run_id,
-                            'platform': 'autogen',
+                            'platform': 'smolagents',
                             'seed': 'seed_0',
                             'temperature': 0.0,
                             'top_p': 0,
-                            'N_available': 50,
+                            'N_available': 53,
                             'K_required': k_required_map[complexity],
                             'task_id': task['id'],
                             'max_steps': 20,
@@ -232,8 +229,7 @@ def run_autogen_benchmark():
         traceback.print_exc()
         return False
 
-
 if __name__ == "__main__":
-    success = run_autogen_benchmark()
+    success = run_smolagents_benchmark()
     if not success:
         sys.exit(1)
