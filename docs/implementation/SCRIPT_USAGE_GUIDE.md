@@ -7,44 +7,59 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 ### **Removed Scripts**
 - ❌ `validate_smolagents.py` - Duplicated smart validation logic
 
-### **Renamed Scripts**
-- 🔄 `run_benchmark_full.py` → `run_benchmark_crewai.py` - Now clearly indicates it's for CrewAI
+### **Moved Scripts**
+- 🔄 All benchmark runners moved to `scripts/` directory
+- 🔄 Analysis scripts moved to `scripts/analysis/` directory
 
 ### **Updated Infrastructure**
-- ✅ Run index now includes SMOLAgents runs
-- ✅ Smart validation handles multiple platforms
-- ✅ Consolidated validation logic
+- ✅ Run index now includes all platform runs (CrewAI, SMOLAgents, AutoGen, LangGraph)
+- ✅ Smart validation handles all platforms with ChatGPT-based validation
+- ✅ Consolidated validation logic with comprehensive analysis
+- ✅ Repository structure reorganized for professional use
 
 ## 📋 **Script Purposes & Usage**
 
 ### **1. Benchmark Execution Scripts**
 
-#### `run_benchmark_crewai.py`
+#### `scripts/run_benchmark_crewai.py`
 **Purpose**: Run full benchmark with CrewAI adapter
-**Usage**: `python run_benchmark_crewai.py`
+**Usage**: `python scripts/run_benchmark_crewai.py`
 **What it does**:
-- Runs full test matrix (50 tools, K=1/2/3 complexity)
+- Runs full test matrix (53 tools, K=1/2/3 complexity)
 - Uses CrewAI adapter with 20 max steps
 - Generates results in `results/` directory
 - Updates run index automatically
+- **Performance**: 87.3% semantic accuracy
 
-#### `run_benchmark_smolagents.py`
+#### `scripts/run_benchmark_smolagents.py`
 **Purpose**: Run full benchmark with SMOLAgents adapter
-**Usage**: `python run_benchmark_smolagents.py`
+**Usage**: `python scripts/run_benchmark_smolagents.py`
 **What it does**:
-- Runs full test matrix (50 tools, K=1/2/3 complexity)
+- Runs full test matrix (53 tools, K=1/2/3 complexity)
 - Uses SMOLAgents adapter with 20 max steps
 - Generates results in `results/` directory
 - Updates run index automatically
+- **Performance**: 80.0% semantic accuracy
 
-#### `run_benchmark_langgraph.py`
-**Purpose**: Run full benchmark with LangGraph adapter
-**Usage**: `python run_benchmark_langgraph.py`
+#### `scripts/run_benchmark_autogen.py`
+**Purpose**: Run full benchmark with AutoGen adapter
+**Usage**: `python scripts/run_benchmark_autogen.py`
 **What it does**:
-- Runs full test matrix (50 tools, K=1/2/3 complexity)
+- Runs full test matrix (53 tools, K=1/2/3 complexity)
+- Uses AutoGen adapter with 20 max steps
+- Generates results in `results/` directory
+- Updates run index automatically
+- **Performance**: 76.7% semantic accuracy
+
+#### `scripts/run_benchmark_langgraph.py`
+**Purpose**: Run full benchmark with LangGraph adapter
+**Usage**: `python scripts/run_benchmark_langgraph.py`
+**What it does**:
+- Runs full test matrix (53 tools, K=1/2/3 complexity)
 - Uses LangGraph adapter with 20 max steps
 - Generates results in `results/` directory
 - Updates run index automatically
+- **Performance**: 68.7% semantic accuracy
 
 ### **2. Analysis & Validation Scripts**
 
@@ -54,11 +69,29 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 **What it does**:
 - Automatically finds most recent run from run index
 - Validates results using ChatGPT (GPT-4o-mini)
-- Handles multiple platforms (CrewAI, SMOLAgents, LangGraph, Mock)
-- Saves results to `smart_validation_results/`
+- Handles all platforms (CrewAI, SMOLAgents, AutoGen, LangGraph)
+- Saves results to `results/smart_validation/`
+
+#### `scripts/analysis/smart_validation_chatgpt.py`
+**Purpose**: Run ChatGPT-based validation on specific benchmark results
+**Usage**: `python scripts/analysis/smart_validation_chatgpt.py`
+**What it does**:
+- Validates results using ChatGPT (GPT-4o-mini) with improved prompts
+- Handles all platforms with consistent validation methodology
+- Saves results to `results/smart_validation/`
+- Used for the final white paper analysis
+
+#### `scripts/analysis/comprehensive_analysis.py`
+**Purpose**: Generate comprehensive analysis across all platforms
+**Usage**: `python scripts/analysis/comprehensive_analysis.py`
+**What it does**:
+- Analyzes results across three performance buckets (Error Rate, Exact Match, Semantic Match)
+- Generates detailed performance metrics for all platforms
+- Saves comprehensive analysis to `results/analysis/`
+- Used for white paper data generation
 
 #### `compare_platforms.py`
-**Purpose**: Compare all platforms (CrewAI, SMOLAgents, LangGraph) performance using smart validation
+**Purpose**: Compare all platforms (CrewAI, SMOLAgents, AutoGen, LangGraph) performance using smart validation
 **Usage**: `python compare_platforms.py`
 **What it does**:
 - Loads smart validation results for all platforms
@@ -80,29 +113,34 @@ We've cleaned up the script structure to eliminate duplication and improve clari
 ### **Option 1: Run All Platforms & Compare**
 ```bash
 # 1. Run CrewAI benchmark
-python run_benchmark_crewai.py
+python scripts/run_benchmark_crewai.py
 
 # 2. Run SMOLAgents benchmark  
-python run_benchmark_smolagents.py
+python scripts/run_benchmark_smolagents.py
 
-# 3. Run LangGraph benchmark
-python run_benchmark_langgraph.py
+# 3. Run AutoGen benchmark
+python scripts/run_benchmark_autogen.py
 
-# 4. Compare results
+# 4. Run LangGraph benchmark
+python scripts/run_benchmark_langgraph.py
+
+# 5. Compare results
 python compare_platforms.py
 ```
 
 ### **Option 2: Run Single Platform & Analyze**
 ```bash
 # 1. Run benchmark (choose one)
-python run_benchmark_crewai.py
+python scripts/run_benchmark_crewai.py
 # OR
-python run_benchmark_smolagents.py
+python scripts/run_benchmark_smolagents.py
 # OR
-python run_benchmark_langgraph.py
+python scripts/run_benchmark_autogen.py
+# OR
+python scripts/run_benchmark_langgraph.py
 
 # 2. Generate comprehensive analysis
-python generate_final_stats.py
+python scripts/analysis/comprehensive_analysis.py
 ```
 
 ### **Option 3: Just Validate Existing Results**
@@ -118,8 +156,8 @@ python smart_validation.py
 - `results/run_index.json` - Run metadata and platform info
 
 ### **Smart Validation**
-- `smart_validation_results/smart_validation_*.json` - Detailed validation results
-- `smart_validation_results/smart_validation_summary_*.csv` - Summary CSV
+- `results/smart_validation/smart_validation_*.json` - Detailed validation results
+- `results/smart_validation/smart_validation_summary_*.csv` - Summary CSV
 
 ### **Analysis Reports**
 - `results/performance_report.txt` - Platform performance analysis
@@ -136,7 +174,7 @@ python smart_validation.py
 - Built into adapter implementations
 
 ### **Tool Catalog**
-- All platforms use **50 tools** (full catalog)
+- All platforms use **53 tools** (full catalog including hash/encoding tools)
 - No subsetting to ensure fair comparison
 
 ## ⚠️ **Important Notes**
@@ -159,20 +197,21 @@ python smart_validation.py
 
 ## 📈 **Performance Comparison**
 
-Based on current results:
+Based on current ChatGPT-validated results:
 
-| Platform | Smart Success Rate | Original Success Rate | Improvement |
-|----------|-------------------|----------------------|-------------|
-| **CrewAI** | 78.0% | 0.0% | +78.0% |
-| **SMOLAgents** | 72.0% | 0.0% | +72.0% |
-| **LangGraph** | 67.3% | 0.0% | +67.3% |
-| **Best Performance** | **CrewAI** | **N/A** | **+78.0%** |
+| Platform | Semantic Accuracy | Error Rate | Speed | Cost Efficiency |
+|----------|------------------|------------|-------|-----------------|
+| **CrewAI** | 87.3% | 2.0% | 4.7s | Medium |
+| **SMOLAgents** | 80.0% | 0.0% | 2.3s | High |
+| **AutoGen** | 76.7% | 2.7% | 5.2s | Medium |
+| **LangGraph** | 68.7% | 0.0% | 6.8s | Low |
 
 **Key Insights**:
-- CrewAI leads with 78.0% success rate
-- SMOLAgents follows with 72.0% success rate
-- LangGraph provides solid baseline with 67.3% success rate
-- All platforms show significant improvement with smart validation
+- CrewAI leads with 87.3% semantic accuracy
+- SMOLAgents offers best cost efficiency with 80.0% accuracy
+- AutoGen provides strong conversational capabilities with 76.7% accuracy
+- LangGraph excels at complex workflows with 68.7% accuracy
+- All platforms show significant improvement with ChatGPT validation over exact matching
 - Performance gap between platforms is relatively small (10.7 percentage points)
 
 ## 🔄 **Maintenance**
