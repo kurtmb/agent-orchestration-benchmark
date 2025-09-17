@@ -330,7 +330,7 @@ Our analysis reveals significant performance degradation patterns across all pla
 
 **Data Correction**: Special thanks to Melanie for identifying inconsistencies in the previous K-group analysis results. The numbers presented in this section were corrected and validated on September 16th, 2025, ensuring accuracy and reliability of the complexity analysis.
 
-![K-Group Performance Degradation](results/k_group_analysis/k_group_degradation_chart.png)
+![K-Group Performance Degradation](../../results/k_group_analysis/k_group_degradation_chart.png)
 
 *Figure 4.1: Performance degradation across task complexity levels (K=1 to K=3) for all four orchestrator platforms, showing mean accuracy with individual run variability.*
 
