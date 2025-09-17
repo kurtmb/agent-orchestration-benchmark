@@ -46,30 +46,48 @@
 
 ### B.1 K=1 (Simple) Tasks Performance
 
-| Platform | Semantic Success | Exact Match | Avg Time (s) | Common Issues |
-|----------|------------------|-------------|--------------|---------------|
-| **CrewAI** | 90%+ | 60%+ | 1.2 | Verbose output formatting |
-| **SMOLAgents** | 85%+ | 50%+ | 0.8 | Number format variations |
-| **AutoGen** | 80%+ | 45%+ | 1.5 | Conversational overhead |
-| **LangGraph** | 75%+ | 40%+ | 2.1 | Graph traversal complexity |
+| Platform | Semantic Success | Individual Run Range | Avg Time (s) | Common Issues |
+|----------|------------------|---------------------|--------------|---------------|
+| **CrewAI** | 93.3% | 90.0% - 95.0% | 1.2 | Verbose output formatting |
+| **SMOLAgents** | 93.3% | 85.0% - 100.0% | 0.8 | Number format variations |
+| **AutoGen** | 90.0% | 85.0% - 95.0% | 1.5 | Conversational overhead |
+| **LangGraph** | 73.3% | 70.0% - 75.0% | 2.1 | Graph traversal complexity |
 
 ### B.2 K=2 (Medium) Tasks Performance
 
-| Platform | Semantic Success | Exact Match | Avg Time (s) | Common Issues |
-|----------|------------------|-------------|--------------|---------------|
-| **CrewAI** | 85%+ | 55%+ | 3.2 | Multi-step reasoning |
-| **SMOLAgents** | 80%+ | 45%+ | 2.1 | Tool chaining |
-| **AutoGen** | 75%+ | 40%+ | 4.1 | Context management |
-| **LangGraph** | 70%+ | 40%+ | 5.3 | State management |
+| Platform | Semantic Success | Individual Run Range | Avg Time (s) | Common Issues |
+|----------|------------------|---------------------|--------------|---------------|
+| **CrewAI** | 88.3% | 85.0% - 90.0% | 3.2 | Multi-step reasoning |
+| **SMOLAgents** | 76.7% | 75.0% - 80.0% | 2.1 | Tool chaining |
+| **AutoGen** | 73.3% | 70.0% - 75.0% | 4.1 | Context management |
+| **LangGraph** | 68.3% | 65.0% - 70.0% | 5.3 | State management |
 
 ### B.3 K=3 (Complex) Tasks Performance
 
-| Platform | Semantic Success | Exact Match | Avg Time (s) | Common Issues |
-|----------|------------------|-------------|--------------|---------------|
-| **CrewAI** | 80%+ | 50%+ | 8.1 | Complex reasoning |
-| **SMOLAgents** | 75%+ | 45%+ | 4.2 | Multi-tool coordination |
-| **AutoGen** | 70%+ | 40%+ | 9.8 | Conversation flow |
-| **LangGraph** | 65%+ | 40%+ | 12.1 | Graph complexity |
+| Platform | Semantic Success | Individual Run Range | Avg Time (s) | Common Issues |
+|----------|------------------|---------------------|--------------|---------------|
+| **CrewAI** | 73.3% | 70.0% - 80.0% | 8.1 | Complex reasoning |
+| **SMOLAgents** | 60.0% | 50.0% - 70.0% | 4.2 | Multi-tool coordination |
+| **AutoGen** | 56.7% | 40.0% - 70.0% | 9.8 | Conversation flow |
+| **LangGraph** | 60.0% | 60.0% - 60.0% | 12.1 | Graph complexity |
+
+### B.4 Performance Degradation Analysis
+
+| Platform | K=1→K=2 Drop | K=2→K=3 Drop | Total Drop (K=1→K=3) | Degradation Pattern |
+|----------|--------------|--------------|---------------------|-------------------|
+| **CrewAI** | -5.0% | -15.0% | -20.0% | Gradual, consistent |
+| **SMOLAgents** | -16.7% | -16.7% | -33.3% | Steep, uniform |
+| **AutoGen** | -16.7% | -16.7% | -33.3% | Steep, uniform |
+| **LangGraph** | -5.0% | -8.3% | -13.3% | Most stable |
+
+### B.5 Individual Run Variability
+
+| Platform | K=1 Std Dev | K=2 Std Dev | K=3 Std Dev | Overall Consistency |
+|----------|-------------|-------------|-------------|-------------------|
+| **CrewAI** | 2.9% | 2.9% | 5.8% | High consistency |
+| **SMOLAgents** | 7.6% | 2.9% | 10.0% | Variable on complex tasks |
+| **AutoGen** | 5.0% | 2.9% | 15.3% | High variability on complex tasks |
+| **LangGraph** | 2.9% | 2.9% | 0.0% | Most consistent on complex tasks |
 
 ## C. Error Analysis (ChatGPT-Validated)
 
@@ -268,6 +286,47 @@
 | `smart_validation_summary_*.csv` | ChatGPT validation results | September 9, 2025 |
 | `benchmark_runs_tracking.md` | Run tracking and organization | September 9, 2025 |
 | `final_validation_comparison.py` | Validation methodology comparison | September 9, 2025 |
+
+### J.3 K-Group Analysis Data Sources
+
+The task complexity analysis (Section 4.3) is based on the following specific data files:
+
+#### Source Data Files:
+- **Smart Validation Results**: `results/smart_validation/smart_validation_*.json`
+  - `smart_validation_run_000003_20250909_142747.json` (CrewAI Run 1)
+  - `smart_validation_run_000003_20250909_142152.json` (CrewAI Run 2)
+  - `smart_validation_run_000003_20250909_135954.json` (CrewAI Run 3)
+  - `smart_validation_run_20250909_151026.json` (SMOLAgents Run 1)
+  - `smart_validation_run_20250909_151021.json` (SMOLAgents Run 2)
+  - `smart_validation_run_20250909_151018.json` (SMOLAgents Run 3)
+  - `smart_validation_run_000001_20250909_145400.json` (LangGraph Run 1)
+  - `smart_validation_run_000001_20250909_145352.json` (LangGraph Run 2)
+  - `smart_validation_run_000001_20250909_144425.json` (LangGraph Run 3)
+  - `smart_validation_run_20250909_151037.json` (AutoGen Run 1)
+  - `smart_validation_run_20250909_145420.json` (AutoGen Run 2)
+  - `smart_validation_run_20250909_145411.json` (AutoGen Run 3)
+
+#### Generated Analysis Files:
+- **K-Group Analysis Results**: `results/k_group_analysis/`
+  - `k_group_analysis_crewai.csv` - Individual run breakdown for CrewAI
+  - `k_group_analysis_smolagents.csv` - Individual run breakdown for SMOLAgents
+  - `k_group_analysis_langgraph.csv` - Individual run breakdown for LangGraph
+  - `k_group_analysis_autogen.csv` - Individual run breakdown for AutoGen
+  - `k_group_summary.csv` - Aggregated performance by K-group
+  - `k_group_degradation_chart.png/pdf` - Visualization of performance degradation
+
+#### Analysis Script:
+- **K-Group Analysis Script**: `analyze_k_group_accuracy.py`
+  - Processes smart validation JSON files
+  - Calculates accuracy by K-group (K=1, K=2, K=3) for each run
+  - Generates detailed CSV outputs and summary statistics
+  - **Last Updated**: September 16, 2025 (data correction and validation)
+
+#### Data Validation:
+- **Correction Date**: September 16, 2025
+- **Validation Method**: ChatGPT-based semantic validation
+- **Sample Size**: 3 runs per platform, 50 tasks per run (20 K=1, 20 K=2, 10 K=3)
+- **Total Data Points**: 600 individual task executions across all runs
 
 ---
 

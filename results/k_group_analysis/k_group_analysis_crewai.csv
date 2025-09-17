@@ -1,0 +1,10 @@
+Run,K_Group,Total_Tasks,Correct,Incorrect,Accuracy_Percent
+Run_1,K=1,20,18,2,90.00
+Run_1,K=2,20,18,2,90.00
+Run_1,K=3,10,7,3,70.00
+Run_2,K=1,20,19,1,95.00
+Run_2,K=2,20,17,3,85.00
+Run_2,K=3,10,7,3,70.00
+Run_3,K=1,20,19,1,95.00
+Run_3,K=2,20,18,2,90.00
+Run_3,K=3,10,8,2,80.00

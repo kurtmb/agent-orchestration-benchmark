@@ -1,0 +1,13 @@
+Orchestrator,K_Group,Avg_Accuracy,Min_Accuracy,Max_Accuracy,Avg_Total_Tasks
+crewai,K=1,93.33,90.00,95.00,20.0
+crewai,K=2,88.33,85.00,90.00,20.0
+crewai,K=3,73.33,70.00,80.00,10.0
+smolagents,K=1,93.33,85.00,100.00,20.0
+smolagents,K=2,76.67,75.00,80.00,20.0
+smolagents,K=3,60.00,50.00,70.00,10.0
+langgraph,K=1,73.33,70.00,75.00,20.0
+langgraph,K=2,68.33,65.00,70.00,20.0
+langgraph,K=3,60.00,60.00,60.00,10.0
+autogen,K=1,90.00,85.00,95.00,20.0
+autogen,K=2,73.33,70.00,75.00,20.0
+autogen,K=3,56.67,40.00,70.00,10.0

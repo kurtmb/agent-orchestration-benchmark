@@ -48,6 +48,9 @@ python scripts/analysis/comprehensive_analysis.py
 
 # Run ChatGPT validation
 python scripts/analysis/smart_validation_chatgpt.py
+
+# Run K-group complexity analysis
+python analyze_k_group_accuracy.py
 ```
 
 ## 📊 Results Location
@@ -55,6 +58,7 @@ python scripts/analysis/smart_validation_chatgpt.py
 - **Benchmark Results**: `results/runs/`
 - **Analysis Results**: `results/analysis/`
 - **Smart Validation**: `results/smart_validation/`
+- **K-Group Analysis**: `results/k_group_analysis/` - Task complexity performance breakdown
 - **Execution Logs**: `results/transcripts/`
 
 ## 📚 Documentation

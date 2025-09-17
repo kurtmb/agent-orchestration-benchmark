@@ -292,23 +292,47 @@ This analysis demonstrates that traditional exact-match evaluation severely unde
 
 ### 4.3 Task Complexity Analysis
 
+Our analysis reveals significant performance degradation patterns across all platforms as task complexity increases. The data shows clear performance drops from K=1 (simple) to K=3 (complex) tasks, with varying degrees of degradation across platforms.
+
 #### K=1 (Simple Tasks) Performance:
-- **CrewAI**: 90%+ semantic accuracy, consistent performance
-- **SMOLAgents**: 85%+ semantic accuracy, fastest execution
-- **AutoGen**: 80%+ semantic accuracy, good format tolerance
-- **LangGraph**: 75%+ semantic accuracy, reliable execution
+- **CrewAI**: 93.3% semantic accuracy, highest performance baseline
+- **SMOLAgents**: 93.3% semantic accuracy, excellent simple task handling
+- **AutoGen**: 90.0% semantic accuracy, strong simple task execution
+- **LangGraph**: 73.3% semantic accuracy, lower baseline performance
 
 #### K=2 (Medium Tasks) Performance:
-- **CrewAI**: 85%+ semantic accuracy, strong multi-step reasoning
-- **SMOLAgents**: 80%+ semantic accuracy, efficient execution
-- **AutoGen**: 75%+ semantic accuracy, good context management
-- **LangGraph**: 70%+ semantic accuracy, solid workflow handling
+- **CrewAI**: 88.3% semantic accuracy (-5.0% drop from K=1)
+- **SMOLAgents**: 76.7% semantic accuracy (-16.7% drop from K=1)
+- **AutoGen**: 73.3% semantic accuracy (-16.7% drop from K=1)
+- **LangGraph**: 68.3% semantic accuracy (-5.0% drop from K=1)
 
 #### K=3 (Complex Tasks) Performance:
-- **CrewAI**: 80%+ semantic accuracy, excellent complex reasoning
-- **SMOLAgents**: 75%+ semantic accuracy, good efficiency
-- **AutoGen**: 70%+ semantic accuracy, strong dialogue capabilities
-- **LangGraph**: 65%+ semantic accuracy, powerful workflow modeling
+- **CrewAI**: 73.3% semantic accuracy (-15.0% drop from K=2, -20.0% total drop)
+- **SMOLAgents**: 60.0% semantic accuracy (-16.7% drop from K=2, -33.3% total drop)
+- **AutoGen**: 56.7% semantic accuracy (-16.7% drop from K=2, -33.3% total drop)
+- **LangGraph**: 60.0% semantic accuracy (-8.3% drop from K=2, -13.3% total drop)
+
+#### Key Insights from Complexity Analysis:
+
+1. **CrewAI maintains superior performance** across all complexity levels, with the highest accuracy at each K-group and the most gradual degradation curve.
+
+2. **SMOLAgents and AutoGen show significant degradation** on complex tasks, both experiencing 33.3% total performance drop from K=1 to K=3, indicating challenges with high-complexity reasoning.
+
+3. **LangGraph demonstrates the most consistent performance** with the smallest total degradation (13.3%), though starting from a lower baseline.
+
+4. **All platforms show performance degradation** as task complexity increases, highlighting the universal challenge of maintaining accuracy on complex multi-step tasks.
+
+5. **The degradation pattern reveals platform strengths**: CrewAI excels at maintaining performance across complexity levels, while LangGraph shows the most stable degradation curve despite lower overall performance.
+
+#### Important Notes on Analysis:
+
+**Statistical Considerations**: While SMOLAgents and AutoGen show identical degradation percentages (33.3% total drop), they exhibit different ranges of individual run values. SMOLAgents shows variability from 85.0% to 100.0% on K=1 tasks, while AutoGen ranges from 85.0% to 95.0%. This similarity in aggregate metrics despite different value ranges is likely explained by the small number of test cases (10 tasks for K=3) and limited runs (3 per platform). A deeper dive into the differentiation between these two orchestrators would be valuable for understanding their distinct characteristics and use cases.
+
+**Data Correction**: Special thanks to Melanie for identifying inconsistencies in the previous K-group analysis results. The numbers presented in this section were corrected and validated on September 16th, 2025, ensuring accuracy and reliability of the complexity analysis.
+
+![K-Group Performance Degradation](results/k_group_analysis/k_group_degradation_chart.png)
+
+*Figure 4.1: Performance degradation across task complexity levels (K=1 to K=3) for all four orchestrator platforms, showing mean accuracy with individual run variability.*
 
 ### 4.4 Stability and Consistency Analysis
 
