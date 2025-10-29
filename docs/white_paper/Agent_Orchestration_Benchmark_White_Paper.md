@@ -76,6 +76,11 @@ Each platform was evaluated using a standardized adapter pattern that ensures:
 - Uniform error handling and retry logic
 - Comparable timeout and resource management
 - Standardized result formatting and logging
+- **Consistent LLM model**: GPT-4o-mini used across all platforms for fair comparison
+
+To isolate orchestration capabilities from model performance, we maintained identical LLM parameters across all platforms (temperature=0.0, top_p=0). This approach ensures that performance differences reflect orchestration framework capabilities rather than underlying model variations, providing a fair and meaningful comparison of the platforms themselves.
+
+*Note: Shoutout to Ollie for flagging that I forgot to specify which model was used in the original whitepaper (facepalm) - this detail has been added after the original publication.*
 
 ### 2.4 ChatGPT-Based Smart Validation System
 
