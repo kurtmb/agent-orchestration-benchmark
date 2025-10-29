@@ -137,6 +137,16 @@ export OPENAI_API_KEY="your-api-key-here"
 4. **Platform selection** should be based on specific requirements
 5. **Tool catalog size** (53 tools) provides good complexity without overwhelming
 
+## 🌿 Branching Strategy
+
+This repository uses a study-based branching strategy to preserve different experimental configurations:
+
+- **`main`**: Active development branch for ongoing research
+- **`study-v1-original-benchmark`**: Preserves the original comprehensive study (50 tasks, 4 platforms, GPT-4o-mini)
+- **Future study branches**: Will be created for different model comparisons, task variations, or platform additions
+
+**For Contributors**: When jumping into this project, check the branch names to understand which study version you're working with. Each study branch represents a complete, reproducible experimental setup with its own results and documentation.
+
 ## 🤝 Contributing
 
 1. Fork the repository
